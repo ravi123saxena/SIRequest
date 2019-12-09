@@ -1,0 +1,148 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <title>mainStream - Feedback Details</title>
+</head>
+<body>
+    <!-- Feedback Details page -->
+    <div data-role="page" class="ms-inventory content-section" id="feedbackDetailPage">
+        <!-- jQueryMobile Events -->
+        <script type="text/javascript">
+            // Page before create event for feedback details page
+            $(document).one('pagebeforecreate', "#feedbackDetailPage", function () {
+                if (navigator.onLine) {
+                    getTranslations("ProvideFeedback");
+                } else {
+                    setTimeout(function () {
+                        hideImage();
+                        showErrorPopUp(true, noNetworkTranslation);
+                    }, 1000);
+                }
+            });
+            // Page show event for feedback details page
+            $(document).one('pageshow', "#feedbackDetailPage", function () {
+                //Hide Logout button for SSO user
+                if (getLocal("SSOUser") === "true") {
+                    $("#logoutButton").hide();
+                }
+
+                // Used to configure back button in different platforms.
+                configureBackButton();
+
+                if (navigator.onLine) {
+                    feedbackDetail();
+                    //Translation section
+                    setTimeout(function () {
+                        $("#FeedbackSuccessfulLabel").text(getTranslatedValue("FeedbackSuccessfulLabel"));
+                        $("#FeedbackInformationLabel").text(getTranslatedValue("FeedbackInformationLabel"));
+                        $("#FeedbackMessageLabel").text(getTranslatedValue("FeedbackMessageLabel"));
+                        $("#FeedbackQuestionDisplayLabel").text(getTranslatedValue("FeedbackQuestionDisplayLabel"));
+                        $("#FeedbackCommentsDisplayLabel").text(getTranslatedValue("FeedbackCommentsDisplayLabel"));
+                        var pageID = $.mobile.activePage.attr('id');
+                        appName == 'iCRS' ? $("#" + pageID + " #appHeader").text(appHeaderForiOS) : $("#" + pageID + " #appHeader").text(appHeaderForAndroid);
+                    }, 500);
+                } else {
+                    setTimeout(function () {
+                        hideImage();
+                        showErrorPopUp(true, noNetworkTranslation);
+                    }, 1000);
+                }
+
+            });
+            function navigateFeedback() {
+                if (navigator.onLine) {
+                    if (getLocal("NavigateToFeedback") == "Sub") {
+                        $.mobile.changePage("feedback.html", "fade");
+                    }
+                    else if (getLocal("NavigateToFeedback") == "Main") {
+                        $.mobile.changePage("requiredFeedbackWO.html", "fade");
+                    }
+                } else {
+                    setTimeout(function () {
+                        hideImage();
+                        showErrorPopUp(true, noNetworkTranslation);
+                    }, 1000);
+                }
+            }
+  
+        </script>
+        <!-- header section -->
+        <div data-role="header" class="ms-inner-header" data-position="fixed">
+            <a href="#menu" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-menuBar"
+                data-corners="false" id="menuBar">Menu</a>
+            <a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-back-new"
+                data-corners="false" data-shadow="false" onClick="navigateFeedback();" id="backButton">Back</a>
+            <a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-barcode"
+                   data-corners="false" data-shadow="false" id="scanButton" onclick="scanBarcode();"></a>
+            <h1 id="appHeader">
+            </h1>
+            <!--<a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-icon-help"
+                data-corners="false" onclick="navigateToHelp();">Help</a>-->
+                 <a href="#" id="logoutButton" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-icon-logout"
+                    data-corners="false" onclick="logOut();">Logout</a>
+        </div>
+        <!-- /header -->
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#" class="ui-btn-active screenHeader" id="FeedbackSuccessfulLabel"></a></li>
+            </ul>
+        </div>
+        <!-- panel Section -->
+        <div data-role="panel" id="menu" data-theme="b" data-display="push">
+            <div class="ui-panel-inner">
+                <!-- This UL is the menu, where the items will be added -->
+                <!-- Make sure you don't add any <li> or any other content inside it! -->
+                <ul data-role="listview" class="mainMenu"></ul>
+            </div>
+        </div>
+        <!-- /panel -->
+        <!-- Feedback Information section -->
+        <div class="ui-corner-all custom-corners">
+            <div class="ui-bar ui-bar-a">
+                <h3 id="FeedbackInformationLabel">
+                </h3>
+            </div>
+            <div class="ui-body ui-body-a">
+                <div class="ms-accord-details ms-grid-content">
+                    <p id="FeedbackMessageLabel">
+                    </p>
+                    <table width="100%" class="custom-table" id="feedbackDetailTable" border="0" cellpadding="0"
+                        cellspacing="0">
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- /Feedback Information -->
+        <!-- Feedback Questions section -->
+        <div class="ui-corner-all custom-corners">
+            <div class="ui-bar ui-bar-a">
+                <h3 id="FeedbackQuestionDisplayLabel">
+                </h3>
+            </div>
+            <div class="ui-body ui-body-a">
+                <div class="ms-accord-details ms-grid-content">
+                    <div id="ratingDetails">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Feedback Questions -->
+        <!-- Feedback Comments section -->
+        <div class="ui-corner-all custom-corners">
+            <div class="ui-bar ui-bar-a">
+                <h3 id="FeedbackCommentsDisplayLabel">
+                </h3>
+            </div>
+            <div class="ui-body ui-body-a">
+                <div class="ms-accord-details ms-grid-content">
+                    <textarea rows="5" cols="15" data-role="none" name="feedbackCommentsDetail" id="feedbackCommentsDetail" disabled></textarea>
+                </div>
+            </div>
+        </div>
+        <!-- /Feedback comments -->
+    </div>
+    <!-- /page -->
+</body>
+</html>

@@ -1,0 +1,413 @@
+﻿<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{76EFF2A3-8256-439C-9D46-B7B6AD4E3325}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CrossFormsGlobal.MobileApps.CRS</RootNamespace>
+    <AssemblyName>CrossFormsGlobal.MobileApps.CRS</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <Use64BitIISExpress />
+    <IISExpressSSLPort>44387</IISExpressSSLPort>
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform">
+      <HintPath>..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="config.xml" />
+    <Content Include="Global.asax" />
+    <Content Include="ImagesLogo\CFGCustomer\IOPSLogowhteoutlines.png" />
+    <Content Include="ImagesLogo\CFGCustomer\MainstreamLogoBig.png" />
+    <Content Include="ImagesLogo\CFGCustomer\regionslogo.png" />
+    <Content Include="quickLinksImages\msg.png" />
+    <Content Include="quickLinksImages\users.png" />
+    <Content Include="res\icon\android\icon-36-ldpi.png" />
+    <Content Include="res\icon\android\icon-48-mdpi.png" />
+    <Content Include="res\icon\android\icon-72-hdpi.png" />
+    <Content Include="res\icon\android\icon-96-xhdpi.png" />
+    <Content Include="res\icon\bada-wac\icon-48-type5.png" />
+    <Content Include="res\icon\bada-wac\icon-50-type3.png" />
+    <Content Include="res\icon\bada-wac\icon-80-type4.png" />
+    <Content Include="res\icon\bada\icon-128.png" />
+    <Content Include="res\icon\blackberry10\icon-80.png" />
+    <Content Include="res\icon\blackberry\icon-80.png" />
+    <Content Include="res\icon\ios\icon-57-2x.png" />
+    <Content Include="res\icon\ios\icon-57.png" />
+    <Content Include="res\icon\ios\icon-72-2x.png" />
+    <Content Include="res\icon\ios\icon-72.png" />
+    <Content Include="res\icon\tizen\icon-128.png" />
+    <Content Include="res\icon\webos\icon-64.png" />
+    <Content Include="res\icon\windows-phone\icon-173-tile.png" />
+    <Content Include="res\icon\windows-phone\icon-48.png" />
+    <Content Include="res\icon\windows-phone\icon-62-tile.png" />
+    <Content Include="res\screen\android\screen-hdpi-landscape.png" />
+    <Content Include="res\screen\android\screen-hdpi-portrait.png" />
+    <Content Include="res\screen\android\screen-ldpi-landscape.png" />
+    <Content Include="res\screen\android\screen-ldpi-portrait.png" />
+    <Content Include="res\screen\android\screen-mdpi-landscape.png" />
+    <Content Include="res\screen\android\screen-mdpi-portrait.png" />
+    <Content Include="res\screen\android\screen-xhdpi-landscape.png" />
+    <Content Include="res\screen\android\screen-xhdpi-portrait.png" />
+    <Content Include="res\screen\bada-wac\screen-type3.png" />
+    <Content Include="res\screen\bada-wac\screen-type4.png" />
+    <Content Include="res\screen\bada-wac\screen-type5.png" />
+    <Content Include="res\screen\bada\screen-portrait.png" />
+    <Content Include="res\screen\blackberry10\splash-1280x768.png" />
+    <Content Include="res\screen\blackberry10\splash-720x720.png" />
+    <Content Include="res\screen\blackberry10\splash-768x1280.png" />
+    <Content Include="res\screen\blackberry\screen-225.png" />
+    <Content Include="res\screen\ios\screen-ipad-landscape-2x.png" />
+    <Content Include="res\screen\ios\screen-ipad-landscape.png" />
+    <Content Include="res\screen\ios\screen-ipad-portrait-2x.png" />
+    <Content Include="res\screen\ios\screen-ipad-portrait.png" />
+    <Content Include="res\screen\ios\screen-iphone-landscape-2x.png" />
+    <Content Include="res\screen\ios\screen-iphone-landscape.png" />
+    <Content Include="res\screen\ios\screen-iphone-portrait-2x.png" />
+    <Content Include="res\screen\ios\screen-iphone-portrait-568h-2x.png" />
+    <Content Include="res\screen\ios\screen-iphone-portrait.png" />
+    <Content Include="res\screen\webos\screen-64.png" />
+    <Content Include="res\screen\windows-phone\screen-portrait.jpg" />
+    <Content Include="Web.config" />
+    <Content Include="www\aboutUs.html" />
+    <Content Include="www\Attachment.html" />
+    <Content Include="www\changePassword.html" />
+    <Content Include="www\createServiceRequest.html" />
+    <Content Include="www\css\images\ajax-loader.gif" />
+    <Content Include="www\css\images\barcode.png" />
+    <Content Include="www\css\images\camera.png" />
+    <Content Include="www\css\images\Chrysanthemum.jpg" />
+    <Content Include="www\css\images\clock.png" />
+    <Content Include="www\css\images\conf.png" />
+    <Content Include="www\css\images\controls.png" />
+    <Content Include="www\css\images\dashboard-v.png" />
+    <Content Include="www\css\images\gallery.png" />
+    <Content Include="www\css\images\icon-back.png" />
+    <Content Include="www\css\images\icon-customer.png" />
+    <Content Include="www\css\images\icons-18-black.png" />
+    <Content Include="www\css\images\icons-18-white.png" />
+    <Content Include="www\css\images\icons-36-black.png" />
+    <Content Include="www\css\images\icons-36-white.png" />
+    <Content Include="www\css\images\icons-36.png" />
+    <Content Include="www\css\images\Koala.jpg" />
+    <Content Include="www\css\images\light.png" />
+    <Content Include="www\css\images\Lighthouse.jpg" />
+    <Content Include="www\css\images\logo.png" />
+    <Content Include="www\css\images\logout.png" />
+    <Content Include="www\css\images\menu-active-icon.png" />
+    <Content Include="www\css\images\menu.png" />
+    <Content Include="www\css\images\Microphone.png" />
+    <Content Include="www\css\images\Penguins.jpg" />
+    <Content Include="www\css\images\restroom.png" />
+    <Content Include="www\css\images\scanBarcode.png" />
+    <Content Include="www\css\images\search.png" />
+    <Content Include="www\css\images\search_icon.gif" />
+    <Content Include="www\css\images\seeepg.png" />
+    <Content Include="www\css\images\select-arrow.png" />
+    <Content Include="www\css\images\sepg.png" />
+    <Content Include="www\css\images\settings.png" />
+    <Content Include="www\css\images\sound.png" />
+    <Content Include="www\css\images\Tulips.jpg" />
+    <Content Include="www\css\images\ui-icon-delete.png" />
+    <Content Include="www\css\images\ui-icon-help.png" />
+    <Content Include="www\css\images\ui-icon-logout.png" />
+    <Content Include="www\css\images\ui-icon-menu.png" />
+    <Content Include="www\css\jqm-datebox-1.4.5.css" />
+    <Content Include="www\css\jqm-datebox-1.4.5.min.css" />
+    <Content Include="www\css\jquery.bxslider.css" />
+    <Content Include="www\css\jquery.jqplot.css" />
+    <Content Include="www\css\jquery.mobile-1.3.2.min.css" />
+    <Content Include="www\css\jquery.mobile-1.4.5.css" />
+    <Content Include="www\css\jquery.mobile-1.4.5.min.css" />
+    <Content Include="www\css\lightslider.css" />
+    <Content Include="www\css\style.css" />
+    <Content Include="www\css\style_crossform.css" />
+    <Content Include="www\css\style_insight.css" />
+    <Content Include="www\dashboard.html" />
+    <Content Include="www\dynamicMenus.html" />
+    <Content Include="www\editProfile.html" />
+    <Content Include="www\expBudget.html" />
+    <Content Include="www\feedback.html" />
+    <Content Include="www\feedbackDetail.html" />
+    <Content Include="www\feedbackInfo.html" />
+    <Content Include="www\Help.html" />
+    <Content Include="www\ImagesLogo\CFGCustomer\IOPSLogowhteoutlines.png" />
+    <Content Include="www\ImagesLogo\CFGCustomer\MainstreamLogoBig.png" />
+    <Content Include="www\ImagesLogo\CFGCustomer\regionslogo.png" />
+    <Content Include="www\images\ajax-loader.gif" />
+    <Content Include="www\images\barcode.png" />
+    <Content Include="www\images\Chrysanthemum.jpg" />
+    <Content Include="www\images\clock.png" />
+    <Content Include="www\images\conf.png" />
+    <Content Include="www\images\dashboard-v.png" />
+    <Content Include="www\images\down.png" />
+    <Content Include="www\images\icon-back.png" />
+    <Content Include="www\images\icon-customer.png" />
+    <Content Include="www\images\icons-18-black.png" />
+    <Content Include="www\images\icons-18-white.png" />
+    <Content Include="www\images\icons-36-black.png" />
+    <Content Include="www\images\icons-36-white.png" />
+    <Content Include="www\images\icons-36.png" />
+    <Content Include="www\images\Koala.jpg" />
+    <Content Include="www\images\light.png" />
+    <Content Include="www\images\Lighthouse.jpg" />
+    <Content Include="www\images\logo.png" />
+    <Content Include="www\images\menu-active-icon.png" />
+    <Content Include="www\images\Penguins.jpg" />
+    <Content Include="www\images\restroom.png" />
+    <Content Include="www\images\seeepg.png" />
+    <Content Include="www\images\select-arrow.png" />
+    <Content Include="www\images\sepg.png" />
+    <Content Include="www\images\settings.png" />
+    <Content Include="www\images\sound.png" />
+    <Content Include="www\images\Tulips.jpg" />
+    <Content Include="www\images\ui-icon-delete.png" />
+    <Content Include="www\images\ui-icon-help.png" />
+    <Content Include="www\images\ui-icon-logout.png" />
+    <Content Include="www\images\ui-icon-menu.png" />
+    <Content Include="www\images\up.png" />
+    <Content Include="www\index.html" />
+    <Content Include="www\InspectionPictures.html" />
+    <Content Include="www\Login.html" />
+    <Content Include="www\openOrders.html" />
+    <Content Include="www\Profile.html" />
+    <Content Include="www\quickLinks.html" />
+    <Content Include="www\quickLinksImages\msg.png" />
+    <Content Include="www\quickLinksImages\users.png" />
+    <Content Include="www\recentServicedOrders.html" />
+    <Content Include="www\RequestService.html" />
+    <Content Include="www\requiredFeedbackWO.html" />
+    <Content Include="www\scripts\aes.js" />
+    <Content Include="www\scripts\app.js" />
+    <Content Include="www\scripts\appDB.js" />
+    <Content Include="www\scripts\binding.js" />
+    <Content Include="www\scripts\CreateServiceRequest.js" />
+    <Content Include="www\scripts\customFunctions.js" />
+    <Content Include="www\scripts\dashboard.js" />
+    <Content Include="www\scripts\doc.js" />
+    <Content Include="www\scripts\enc-base64-min.js" />
+    <Content Include="www\scripts\ErrorHandler.js" />
+    <Content Include="www\scripts\externalJs.js" />
+    <Content Include="www\scripts\Globalize\globalize.cultures.js" />
+    <Content Include="www\scripts\Globalize\globalize.js" />
+    <Content Include="www\scripts\globalVars.js" />
+    <Content Include="www\scripts\jqm-datebox-1.4.5.core.min.js" />
+    <Content Include="www\scripts\jqm-datebox-1.4.5.mode.calbox.min.js" />
+    <Content Include="www\scripts\jqplot.barRenderer.js" />
+    <Content Include="www\scripts\jqplot.barRenderer.min.js" />
+    <Content Include="www\scripts\jqplot.canvasAxisLabelRenderer.min.js" />
+    <Content Include="www\scripts\jqplot.canvasAxisTickRenderer.min.js" />
+    <Content Include="www\scripts\jqplot.canvasTextRenderer.min.js" />
+    <Content Include="www\scripts\jqplot.categoryAxisRenderer.js" />
+    <Content Include="www\scripts\jqplot.categoryAxisRenderer.min.js" />
+    <Content Include="www\scripts\jqplot.pieRenderer.min.js" />
+    <Content Include="www\scripts\jqplot.pointLabels.min.js" />
+    <Content Include="www\scripts\jquery-1.11.2.min.js" />
+    <Content Include="www\scripts\jquery-1.9.1.min.js" />
+    <Content Include="www\scripts\jquery.flot.pie.js" />
+    <Content Include="www\scripts\jquery.flotjs.js" />
+    <Content Include="www\scripts\jquery.jqplot.js" />
+    <Content Include="www\scripts\jquery.mobile-1.3.2.min.js" />
+    <Content Include="www\scripts\jquery.mobile-1.4.5.min.js" />
+    <Content Include="www\scripts\jquery.mousewheel.min.js" />
+    <Content Include="www\scripts\langs.js" />
+    <Content Include="www\scripts\lightslider.js" />
+    <Content Include="www\scripts\loginScripts.js" />
+    <Content Include="www\scripts\old.js" />
+    <Content Include="www\scripts\scroll-startstop.events.jquery.js" />
+    <Content Include="www\scripts\tripledes.js" />
+    <Content Include="www\scripts\underscore-min.js" />
+    <Content Include="www\serviceHistory.html" />
+    <Content Include="www\serviceReqConfirm.html" />
+    <Content Include="www\themes\crossform\css\images\ajax-loader.gif" />
+    <Content Include="www\themes\crossform\css\images\barcode.png" />
+    <Content Include="www\themes\crossform\css\images\Chrysanthemum.jpg" />
+    <Content Include="www\themes\crossform\css\images\clock.png" />
+    <Content Include="www\themes\crossform\css\images\conf.png" />
+    <Content Include="www\themes\crossform\css\images\dashboard-v.png" />
+    <Content Include="www\themes\crossform\css\images\icon-back.png" />
+    <Content Include="www\themes\crossform\css\images\icon-customer.png" />
+    <Content Include="www\themes\crossform\css\images\icons-18-black.png" />
+    <Content Include="www\themes\crossform\css\images\icons-18-white.png" />
+    <Content Include="www\themes\crossform\css\images\icons-36-black.png" />
+    <Content Include="www\themes\crossform\css\images\icons-36-white.png" />
+    <Content Include="www\themes\crossform\css\images\icons-36.png" />
+    <Content Include="www\themes\crossform\css\images\Koala.jpg" />
+    <Content Include="www\themes\crossform\css\images\light.png" />
+    <Content Include="www\themes\crossform\css\images\Lighthouse.jpg" />
+    <Content Include="www\themes\crossform\css\images\logo.png" />
+    <Content Include="www\themes\crossform\css\images\menu-active-icon.png" />
+    <Content Include="www\themes\crossform\css\images\Penguins.jpg" />
+    <Content Include="www\themes\crossform\css\images\restroom.png" />
+    <Content Include="www\themes\crossform\css\images\seeepg.png" />
+    <Content Include="www\themes\crossform\css\images\select-arrow.png" />
+    <Content Include="www\themes\crossform\css\images\sepg.png" />
+    <Content Include="www\themes\crossform\css\images\sound.png" />
+    <Content Include="www\themes\crossform\css\images\Tulips.jpg" />
+    <Content Include="www\themes\crossform\css\images\ui-icon-delete.png" />
+    <Content Include="www\themes\crossform\css\images\ui-icon-help.png" />
+    <Content Include="www\themes\crossform\css\images\ui-icon-logout.png" />
+    <Content Include="www\themes\crossform\css\images\ui-icon-menu.png" />
+    <Content Include="www\themes\crossform\css\jquery.mobile-1.3.2.min.css" />
+    <Content Include="www\themes\crossform\css\jquery.mobile-1.4.5.css" />
+    <Content Include="www\themes\crossform\css\jquery.mobile-1.4.5.min.css" />
+    <Content Include="www\themes\crossform\css\style.css" />
+    <Content Include="www\themes\insight\css\images\ajax-loader.gif" />
+    <Content Include="www\themes\insight\css\images\Chrysanthemum.jpg" />
+    <Content Include="www\themes\insight\css\images\dashboard-v.png" />
+    <Content Include="www\themes\insight\css\images\icon-back.png" />
+    <Content Include="www\themes\insight\css\images\icon-customer.png" />
+    <Content Include="www\themes\insight\css\images\icons-18-black.png" />
+    <Content Include="www\themes\insight\css\images\icons-18-white.png" />
+    <Content Include="www\themes\insight\css\images\icons-36-black.png" />
+    <Content Include="www\themes\insight\css\images\icons-36-white.png" />
+    <Content Include="www\themes\insight\css\images\icons-36.png" />
+    <Content Include="www\themes\insight\css\images\Koala.jpg" />
+    <Content Include="www\themes\insight\css\images\Lighthouse.jpg" />
+    <Content Include="www\themes\insight\css\images\logo.png" />
+    <Content Include="www\themes\insight\css\images\menu-active-icon.png" />
+    <Content Include="www\themes\insight\css\images\Penguins.jpg" />
+    <Content Include="www\themes\insight\css\images\search_icon.gif" />
+    <Content Include="www\themes\insight\css\images\select-arrow.png" />
+    <Content Include="www\themes\insight\css\images\sepg.png" />
+    <Content Include="www\themes\insight\css\images\Tulips.jpg" />
+    <Content Include="www\themes\insight\css\images\ui-icon-delete.png" />
+    <Content Include="www\themes\insight\css\images\ui-icon-help.png" />
+    <Content Include="www\themes\insight\css\images\ui-icon-logout.png" />
+    <Content Include="www\themes\insight\css\images\ui-icon-menu.png" />
+    <Content Include="www\themes\insight\css\jquery.mobile-1.3.2.min.css" />
+    <Content Include="www\themes\insight\css\jquery.mobile-1.4.5.css" />
+    <Content Include="www\themes\insight\css\jquery.mobile-1.4.5.min.css" />
+    <Content Include="www\themes\insight\css\style.css" />
+    <Content Include="www\viewServiceRequest.html" />
+    <Content Include="www\woDetails.html" />
+    <Content Include="www\woInvoiceApproval.html" />
+    <Content Include="www\woNeedingAttention.html" />
+    <Content Include="www\woPreApproval.html" />
+    <Content Include="www\workOrderApproval.html" />
+    <Content Include="www\WorkOrderCreate.html" />
+    <Content Include="www\WorkOrderDetails.html" />
+    <Content Include="www\workOrderReport.html" />
+    <Content Include="www\WorkOrderSearch.html" />
+    <Content Include="www\WorkOrderSearchHistory.html" />
+    <Content Include="www\WorkOrderVerification.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ios_plist Files\dev\exportOptions.plist" />
+    <Content Include="ios_plist Files\distribution\exportOptions.plist" />
+    <Content Include="package.json" />
+    <None Include="packages.config" />
+    <Content Include="res\README.md" />
+    <Content Include="res\screen\tizen\README.md" />
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Models\" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>51432</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>https://localhost:44387/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

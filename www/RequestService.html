@@ -1,0 +1,671 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <title>mainStream - Work Order Verification</title>
+</head>
+<body>
+    <div data-role="page" id="requestService" class="ms-inventory content-section">
+        <script>
+            $(document).one('pagebeforecreate', "#requestService", function () {
+                if (navigator.onLine) {
+                    getTranslations("ServiceRequestIntegrated");
+                    getMyLocation();
+                    $('#ProblemCodeAutocompleteTD').show();
+                    $("#ProblemCodeCollapsible").hide();
+                    $("#selectedImageDiv").hide();
+
+                    // Just to make sure, first up enable the controls. 
+                    $("#EquipmentGroupDropDownList").removeClass('ui-state-disabled');
+                    $("#EquipmentSubgroupDropDownList").removeClass('ui-state-disabled');
+                    fromQuickLinks = "0";
+
+                    var interval = setTimeout(function () {
+                        $("div").addClass('ui-disabled');
+                        $.mobile.loading('show', {
+                            text: 'Loading',
+                            textVisible: true,
+                            theme: 'b',
+                            textonly: false,
+                            html: ""
+                        });
+                        clearInterval(interval);
+                    }, 1);
+                } else {
+                    setTimeout(function () {
+                        hideImage();
+                        showErrorPopUp(true, noNetworkTranslation);
+                    }, 1000);
+                }
+
+            });
+
+            $(document).one('pageshow', "#requestService", function () {
+                //Hide Logout button for SSO user
+                if (getLocal("SSOUser") === "true") {
+                    $("#logoutButton").hide();
+                }
+
+                if (navigator.onLine) {
+                    IsQuickLinksPage = "false";
+                    $('#dynamicCASItemslist').empty();
+                    checkResetinRequestService = false;
+                    $("#addAttachemntContainer").hide();
+                    $("#clearAttachmentSource").hide();
+                    $('#smallImage').attr("src", "");
+                    $("#selectedImageDiv").hide();
+                    $(".collapsible a").addClass("collapsible");
+
+                    if (getLocal("ProblemCodeNumber") === "0") {
+                        $("#CaptionHeader").text(getLocal("Caption"));
+                        $("#backButton").show();
+                    } else {
+                        $("#backButton").hide();
+                        $("#CaptionHeader").text((decryptStr(getLocal("MSIClientCode")) === "IO") ? getTranslatedValue("requestServiceHeaderIO") : getTranslatedValue("requestServiceHeader"));
+                    }
+
+                    // Used to configure back button in different platforms.
+                    //configureBackButton();
+
+                    getLocationAddress(GetServiceRequestDetails);
+
+                    //ProblemCodeSetUp();
+                    if (getLocal("ProblemCodeSearch").toLowerCase() == "true") {
+                        if (getLocal("ChangeTheOrderOfProblemCodeDropDown") == "1") {
+                            ChangeDropDownOrder();
+                        }
+                    }
+
+                    GetContractForCaller();
+
+                    GetCostCenterDropdown();
+                    BuildCASFrame();
+
+                    $("#CallerNameValue").parent().show();
+                    $("#CallerName").parent().show();
+                    if (decryptStr(getLocal("UseNameField")) != null && decryptStr(getLocal("UseNameField")) != "") {
+                        if (decryptStr(getLocal("UseNameField")).toLowerCase() == "false") {
+                            $("#CallerNameRow").hide();
+                        }
+                    }
+
+                    if (!IsStringNullOrEmpty(decryptStr(getLocal("ShowSiteContact")))) {
+                        if (decryptStr(getLocal("ShowSiteContact")).toLowerCase() == "false") {
+                            $("#ContactPhoneRow").hide();
+                            $("#ContactNameRow").hide();
+                        }
+                    }
+
+                    if (!IsStringNullOrEmpty(decryptStr(localStorage.getItem("EmailAddress")))) {
+                        $("#ProfileNameValue").html(decryptStr(localStorage.getItem("EmailAddress")));
+                    }
+                    else {
+                        $("#ProfileNameValue").html("");
+                    }
+
+                    if (!IsStringNullOrEmpty(decryptStr(localStorage.getItem("Username")))) {
+                        $("#CallerNameValue").val(decryptStr(localStorage.getItem("Username")));
+                        $("#ContactNameValue").val(decryptStr(localStorage.getItem("Username")));
+                    }
+                    else {
+                        $("#CallerNameValue").val("");
+                        $("#ContactNameValue").val("");
+                    }
+
+                    if (!IsStringNullOrEmpty(localStorage.getItem("SitePhone"))) {
+                        $("#ContactPhoneValue").val(localStorage.getItem("SitePhone"));
+                    }
+                    else {
+                        $("#ContactPhoneValue").val("");
+                    }
+
+                    if (!IsStringNullOrEmpty(localStorage.getItem("PhoneNumber"))) {
+                        $("#PhoneNumberValue").val(localStorage.getItem("PhoneNumber"));
+                    }
+                    else {
+                        $("#PhoneNumberValue").val("");
+                    }
+
+                    if (!IsStringNullOrEmpty(localStorage.getItem("LocationDetail"))) {
+                        $("#LocationTextBox").val(localStorage.getItem("LocationDetail"));
+                    }
+                    else {
+                        $("#LocationTextBox").val("");
+                    }
+
+                    if (decryptStr(getLocal("ShowLevelSearch")) != null && decryptStr(getLocal("ShowLevelSearch")) != "") {
+                        if (decryptStr(getLocal("ShowLevelSearch")).toLowerCase() == "true") {
+                            $("#SearchLabel").show();
+                            $("#SearchTextBox").parent().show();
+                            $("#CategoryLabel").show();
+                            $("#CategoryDropDown").parent().show();
+                        }
+                        else {
+                            $("#SearchLabel").hide();
+                            $("#SearchTextBox").parent().hide();
+                            $("#CategoryLabel").hide();
+                            $("#CategoryDropDown").parent().hide();
+                        }
+                    }
+
+                    if (decryptStr(getLocal("SRLevelPlugin")) != null && decryptStr(getLocal("SRLevelPlugin")) != "") {
+                        switch (decryptStr(getLocal("SRLevelPlugin")).toLowerCase()) {
+                            case "4l":
+                                //                    $("#LocationLabel").hide();
+                                $("#LocationDiv").hide();
+                                break;
+                            case "4lloc":
+                                //                    $("#LocationLabel").show();
+                                $("#LocationDiv").show();
+                                $("#LocationTextBox").val(getLocal("LocationDetail"));
+                                break;
+                        }
+                    }
+
+                    //ani
+                    //                    $("#ContactNameValue").keyup(function () {
+                    //                        var Name = $("#CallerNameValue").val();
+                    //                        if (!IsStringNullOrEmpty($("#PhoneNumberValue").val())) {
+                    //                            $('#Collapsible1 .ui-collapsible-heading-toggle').text(getTranslatedValue("AccountInfoLabel") + " - " + Name + ',' + $("#PhoneNumberValue").val());
+                    //                        }
+                    //                        else if (!IsStringNullOrEmpty(Name)) {
+                    //                            $('#Collapsible1 .ui-collapsible-heading-toggle').text(getTranslatedValue("AccountInfoLabel") + " - " + Name);
+                    //                        }
+                    //                        else {
+                    //                            $('#Collapsible1 .ui-collapsible-heading-toggle').text(getTranslatedValue("AccountInfoLabel"));
+                    //                        }
+                    //                    });
+
+                    $("#PhoneNumberValue").bind('input', function () {
+                        var phone = $("#PhoneNumberValue").val();
+                        var heading = $('#Collapsible1 .ui-collapsible-heading-toggle').text();
+                        if (!IsStringNullOrEmpty(phone)) {
+                            $('#Collapsible1 .ui-collapsible-heading-toggle').text(getTranslatedValue("AccountInfoLabel") + "-" + $("#CallerNameValue").val() + "," + phone);
+                        }
+                        else {
+                            $('#Collapsible1 .ui-collapsible-heading-toggle').text(getTranslatedValue("AccountInfoLabel") + "-" + $("#CallerNameValue").val());
+                        }
+                    });
+
+
+
+                    // setTimeout(function () {
+                    SetSiteLabels();
+                    if (!IsStringNullOrEmpty(decryptStr(localStorage.getItem("Username"))) && !IsStringNullOrEmpty(localStorage.getItem("PhoneNumber"))) {
+                        $('#Collapsible1 .ui-collapsible-heading-toggle').text(getTranslatedValue("AccountInfoLabel") + " - " + decryptStr(localStorage.getItem("Username")) + ", " + localStorage.getItem("PhoneNumber"));
+                    }
+                    else if (IsStringNullOrEmpty(localStorage.getItem("PhoneNumber"))) {
+                        $('#Collapsible1 .ui-collapsible-heading-toggle').text(getTranslatedValue("AccountInfoLabel") + " - " + decryptStr(localStorage.getItem("Username")));
+                    }
+                    else if (IsStringNullOrEmpty(decryptStr(localStorage.getItem("Username")))) {
+                        $('#Collapsible1 .ui-collapsible-heading-toggle').text(getTranslatedValue("AccountInfoLabel") + " - " + localStorage.getItem("PhoneNumber"));
+                    }
+                    else {
+                        $('#Collapsible1 .ui-collapsible-heading-toggle').text(getTranslatedValue("AccountInfoLabel"));
+                    }
+
+                    if (decryptStr(getLocal('QLSRShowProblemSubLabel')) === '1') {
+                        $('#ProblemCodeCollapsible .ui-collapsible-heading-toggle').text(getTranslatedValue("ProblemCodeCollapsibleCustomLabel"));
+                    } else {
+                        $('#ProblemCodeCollapsible .ui-collapsible-heading-toggle').text(getTranslatedValue("ProblemCodeCollapsible"));
+                    }
+                    $("#ProfileName").text(getTranslatedValue("ProfileNameLabel"));
+                    $("#CallerName").text(getTranslatedValue("CallerNameLabel"));
+                    $("#ContactName").text(getTranslatedValue("ContactNameLabel") + ":");
+
+                    // For custom Contact Phone label
+                    if (decryptStr(getLocal('CustomContactPhoneLabel')) === '1') {
+                        $("#ContactPhone").text(getTranslatedValue("CustomContactPhoneLabel") + ":");
+                    } else {
+                        $("#ContactPhone").text(getTranslatedValue("ContactPhoneLabel") + ":");
+                    }
+
+                    $('#ContractCollapsable .ui-collapsible-heading-toggle').text(getTranslatedValue("ContractCollapsible"));
+
+                    $("#PhoneNumber").html('<span id="PhoneNumberMandatoryLabel" style="color: Red" >*</span>' + getTranslatedValue("PhoneNumberLabel"));
+                    $("#PriorityLabel").html('<span id="PriorityLabelMandatoryLabel" style="color: Red" >*</span>' + getTranslatedValue("RequestedPriorityLabel"));
+                    $("#hiddenSelect").text(getTranslatedValue("selectOption"));
+                    $("#SearchLabel").text(getTranslatedValue("SearchLabel"));
+                    $("#CategoryLabel").text(getTranslatedValue("SearchCategoryLabel"));
+                    $("#LocationLabel").text(getTranslatedValue("LocationWithinAreaLabel") + ":");
+                    $("#ProblemCodeAutoCompleteLabel").text((decryptStr(getLocal("MSIClientCode")) === "IO") ? getTranslatedValue("ProblemCodeAutoCompleteLabelIO") : getTranslatedValue("ProblemCodeAutoCompleteLabel"));
+
+                    if (decryptStr(getLocal('EquipmentCustomLabels')) === '1') {
+                        $("#EquipmentGroupLabel").html('<label id="temp1" class="custMandatory" style="color:red">*</label>' +
+                            getTranslatedValue("CustomEquipGroupLabel"));
+                        $("#EquipmentSubgroupLabel").html('<label id="temp1" class="custMandatory" style="color:red">*</label>' +
+                            getTranslatedValue("CustomEquipSubGroupLabel"));
+                        $("#ProblemCodeLabel").html('<label id="temp1" class="custMandatory" style="color:red">*</label>' + getTranslatedValue("CustomProblemCodeLabel"));
+                    } else {
+                        $("#EquipmentGroupLabel").html('<label id="temp1" class="custMandatory" style="color:red">*</label>' +
+                        (decryptStr(getLocal("MSIClientCode")) === "IO" ? getTranslatedValue("EquipmentGroupLabelIO") : getTranslatedValue("EquipmentGroupLabel")));
+                        $("#EquipmentSubgroupLabel").html('<label id="temp1" class="custMandatory" style="color:red">*</label>' +
+                        (decryptStr(getLocal("MSIClientCode")) === "IO" ? getTranslatedValue("EquipmentSubgroupLabelIO") : getTranslatedValue("EquipmentSubgroupLabel")));
+                        $("#ProblemCodeLabel").html('<label id="temp1" class="custMandatory" style="color:red">*</label>' + getTranslatedValue("ProblemCodeLabel"));
+                    }
+
+                    $("#ServiceRquestLabel").html('<label id="temp1" class="custMandatory" style="color:red">*</label>' +
+                        (decryptStr(getLocal("MSIClientCode")) === "IO" ? getTranslatedValue("ServiceRquestLabelIO") : getTranslatedValue("ServiceRquestLabel")));
+                    $("#AddAttachmentLabel").text(getTranslatedValue("AddAttachmentLabel"));
+                    $("#RequestServiceButton").text((decryptStr(getLocal("MSIClientCode")) === "IO") ? getTranslatedValue("RequestServiceButtonIO") : getTranslatedValue("RequestServiceButton"));
+                    $("#ResetButton").text(getTranslatedValue("ResetButton"));
+                    $("#AttachmentDescription").text(getTranslatedValue("AttachmentDescription"));
+                    $("#AddButton").text(getTranslatedValue("AddButton"));
+                    $("#DescriptionMandatoryLabel").text(getTranslatedValue("DescriptionMandatoryLabel"));
+                    //$("#workOrderList").text(getTranslatedValue("workOrderList"));
+                    $("#RecentRequestCollapsible .ui-collapsible-heading-toggle").text((decryptStr(getLocal("MSIClientCode")) === "IO") ? getTranslatedValue("recentworkOrderListIO") : getTranslatedValue("recentworkOrderList"));
+                    $("#addAttachmentHeader").text(getTranslatedValue("AddAttachmentLabel"));
+                    $("#descriptionLabel").html("<span style='color:red;'>*</span> " + getTranslatedValue("DescriptionLabel"));
+                    $("#saveButton").text(getTranslatedValue("SaveAttchementLabel"));
+                    var pageID = $.mobile.activePage.attr('id');
+                    appName == 'iCRS' ? $("#" + pageID + " #appHeader").text(appHeaderForiOS) : $("#" + pageID + " #appHeader").text(appHeaderForAndroid);
+
+                    $(".selectOption").text("--" + getTranslatedValue("selectOption") + "--");
+                    $("#addAttachemntLabel").text(getTranslatedValue("addAttachemntLabel"));
+                    $("#deleteConfirmLabel").text(getTranslatedValue("deleteConfirmLabel"));
+                    $("#confirmHeader").text(getTranslatedValue("confirmHeader"));
+                    $("#yesButton").text(getTranslatedValue("yesButton"));
+                    $("#cancelButton").text(getTranslatedValue("cancelButton"));
+                    //}, 1500);
+
+                    // implemented by manju for contract impl
+                    $('#ContractDivCollapsable .ui-collapsible-heading-toggle').text(getTranslatedValue("ContractCollapsible"));
+                    //$("#lblContract").text(getTranslatedValue("ContractFilterLabel"));
+
+                    $("#lblContract").html('<label id="contractLabel" class="custMandatory" style="color:red">*</label>' +
+                            getTranslatedValue("ContractFilterLabel"));
+                    if (getLocal("EditProfileFromWeb") != null && getLocal("EditProfileFromWeb") != "") {
+                        if (getLocal("EditProfileFromWeb").toLowerCase() != "true") {
+                            $("#ProfileNameValue").addClass('ui-disabled');
+                            $("#CallerNameValue").parent().addClass('ui-disabled');
+                            $("#ContactNameValue").parent().addClass('ui-disabled');
+                            $("#ContactPhoneValue").parent().addClass('ui-disabled');
+                            $("#PhoneNumberValue").parent().addClass('ui-disabled');
+
+                            DisableDropDowns();
+                        }
+                    }
+
+                } else {
+                    setTimeout(function () {
+                        hideImage();
+                        showErrorPopUp(true, noNetworkTranslation);
+                    }, 1000);
+                }
+
+            });
+
+            if (decryptStr(getLocal("SRIShowRecentRequests")) != null & decryptStr(getLocal("SRIShowRecentRequests")) != "") {
+                if (decryptStr(getLocal("SRIShowRecentRequests")).toLowerCase() == "false") {
+                    $("#RecentRequestCollapsible").hide();
+                }
+                else {
+                    $("#RecentRequestCollapsible").show();
+                }
+            }
+            function limitDes(element) {
+                var max_chars = 400;
+
+                if (element.value.length > max_chars) {
+                    element.value = element.value.substr(0, max_chars);
+                }
+            }
+
+            //            $("#smallImage").on("swipeleft swiperight", function (event) {
+            //                //var listitem = $(this),
+            //                // These are the classnames used for the CSS transition
+            //				dir = event.type === "swipeleft" ? "left" : "right",
+            //                // Check if the browser supports the transform (3D) CSS transition
+            //				transition = $.support.cssTransform3d ? dir : false;
+            //                confirmAndDelete(transition);
+            //            });
+
+        </script>
+        <div data-role="header" class="ms-inner-header" data-position="fixed">
+            <a href="#menu" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-menuBar"
+                data-corners="false" id="menuBar">Menu</a>
+            <!--<a href="#" id="backButton" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-back-new"
+                data-corners="false" data-shadow="false" data-rel="back">Back</a>-->
+            <a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-barcode"
+                data-corners="false" data-shadow="false" id="scanButton" onclick="scanBarcode();">
+            </a>
+            <h1 id="appHeader">
+            </h1>
+            <!--<a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-icon-help"
+                data-corners="false" onclick="navigateToHelp();">Help</a>-->
+            <a href="#" id="logoutButton" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-icon-logout"
+                data-corners="false" onclick="logOut();">Logout</a>
+        </div>
+        <!-- /header -->
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#" class="ui-btn-active screenHeader" id="CaptionHeader"></a></li>
+            </ul>
+        </div>
+        <!-- panel Section -->
+        <div data-role="panel" id="menu" data-theme="b" data-display="push">
+            <div class="ui-panel-inner">
+                <!-- This UL is the menu, where the items will be added -->
+                <!-- Make sure you don't add any <li> or any other content inside it! -->
+                <ul data-role="listview" class="mainMenu"></ul>
+            </div>
+        </div>
+        <!-- /panel -->
+        <!-- /navbar -->
+        <!--     <form id="createServiceRequestForm">-->
+        <div data-role="collapsible-set" data-theme="c" data-content-theme="d" data-corners="false"
+            class="ms-accord-details ms-grid-content">
+            <div data-role="collapsible" id="Collapsible1" class="collapsible">
+                <h4 id="AccountInfoLabel">
+                </h4>
+                <table width="100%" class="custom-table" border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td class="left-block">
+                            <label id="ProfileName">
+                            </label>
+                        </td>
+                        <td class="right-block" id="ProfileNameValue">
+                        </td>
+                    </tr>
+                    <tr id="CallerNameRow">
+                        <td class="left-block" id="CallerName">
+                        </td>
+                        <td class="right-block">
+                            <input type="text" id="CallerNameValue" />
+                        </td>
+                    </tr>
+                    <tr id="ContactNameRow">
+                        <td class="left-block">
+                            <label id="ContactName">
+                            </label>
+                        </td>
+                        <td class="right-block">
+                            <input type="text" id="ContactNameValue" class="Name" />
+                        </td>
+                    </tr>
+                    <tr id="ContactPhoneRow">
+                        <td class="left-block">
+                            <label id="ContactPhone">
+                            </label>
+                        </td>
+                        <td class="right-block">
+                            <input type="text" id="ContactPhoneValue" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="left-block">
+                            <label id="PhoneNumber">
+                                <span id="PhoneNumberMandatoryLabel" style="color: Red" class="custMandatory">*</span>
+                            </label>
+                        </td>
+                        <td class="right-block">
+                            <input type="text" id="PhoneNumberValue" class="Phone" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="Collapsible2" data-role="collapsible" class="collapsible">
+                <h4 id="LocationInfoLabel">
+                </h4>
+                <ul data-role="listview" data-inset="true">
+                    <li>
+                        <label id="SearchLabel" class="labelFontColor">
+                        </label>
+                        <input type="text" id="SearchTextBox" onkeyup="ResetCategoryDropDown();" />
+                        <label id="CategoryLabel" class="labelFontColor">
+                        </label>
+                        <select id="CategoryDropDown" onchange="FilterLocationDropdown();">
+                        </select>
+                        <label id="Level1Label" class="labelFontColor">
+                            <label id="Level1DropDownMandatorySymbol" class="custMandatory">
+                                *</label>
+                        </label>
+                        <select id="Level1DropDown" class="DropDown1" onchange="BindLevel2DataDropDown();BindContractForLevel1change();">
+                            <!--<option value="-1">--Select--</option>-->
+                        </select>
+                        <label id="Level2Label" class="labelFontColor">
+                            <label id="Level2DropDownMandatorySymbol" style="color: Red" class="custMandatory">
+                                *</label>
+                        </label>
+                        <select id="Level2DropDown" onchange="BindLevel3Data();BindContractForLevel2change();">
+                            <!--<option value="-1">--Select--</option>-->
+                        </select>
+                        <label id="Level3Label" class="labelFontColor">
+                            <label id="Level3DropDownMandatorySymbol" style="color: Red" class="custMandatory">
+                                *</label>
+                        </label>
+                        <select id="Level3DropDown" onchange="BindLevel4Data();">
+                            <!--<option value="-1">--Select--</option>-->
+                        </select>
+                        <label id="Level4Label" class="labelFontColor">
+                            <label id="Level4DropDownMandatorySymbol" style="color: Red" class="custMandatory">
+                                *</label>
+                        </label>
+                        <select id="Level4DropDown" onchange="BindLocationHeader();">
+                            <!--<option value="-1">--Select--</option>-->
+                        </select>
+                        <div id="LocationDiv">
+                            <label id="LocationLabel" class="labelFontColor">
+                            </label>
+                            <input type="text" id="LocationTextBox" />
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div data-role="collapsible" id="ContractDivCollapsable" class="collapsible">
+                <h4 id="ContractCollapsable">
+                </h4>
+                <ul data-role="listview" data-inset="true">
+                    <li>
+                        <!--<label id="lblContract" class="labelFontColor">
+                            <label id="lblContractMandatoryFiled" style="color: Red" class="custMandatory">
+                                *</label>
+                        </label>-->
+                        <!--<label id="lblContract">
+                                <span id="lblContractMandatoryFiled" style="color: Red" class="custMandatory">*</span>
+                            </label>-->
+                        <label id="lblContract" class="labelFontColor">
+                        </label>
+                        <select id="ContractDropDown" onchange="GetPriority(1);ResetAllLevels();ProblemCodeSetUp(); ">
+                            <option value="-1">--Select--</option>
+                        </select>
+                    </li>
+                </ul>
+            </div>
+            <div data-role="collapsible" id="ProblemCodeCollapsible" class="collapsible" style="display: none;">
+                <h4 id="ProblemCodeCollapsible1">
+                </h4>
+                <ul data-role="listview" data-inset="true" id="EquipmentList">
+                    <li id="ProblemCodeAutocompleteTD">
+                        <label id="ProblemCodeAutoCompleteLabel" class="labelFontColor">
+                        </label>
+                        <input type="text" id="ProblemCodeTextBox" onkeyup="GetProbleCodes();" />
+                        <select id="ProblemCodeAutoComplete" onchange="BindProblemCodeDetails(this);">
+                            <option value="-1" class="selectOption"></option>
+                        </select>
+                    </li>
+                    <li id="trEquipmentGroup">
+                        <label id="EquipmentGroupLabel" class="labelFontColor">
+                        </label>
+                        <select id="EquipmentGroupDropDownList" onchange="BindEquipmentDetails(this);">
+                            <option value="-1" class="selectOption"></option>
+                        </select>
+                    </li>
+                    <li id="trEquipmentSubgroup">
+                        <label id="EquipmentSubgroupLabel" class="labelFontColor">
+                        </label>
+                        <select id="EquipmentSubgroupDropDownList" onchange="BindEquipment(this);">
+                            <option value="-1" class="selectOption"></option>
+                        </select>
+                    </li>
+                    <li id="trProblemCodes">
+                        <label id="ProblemCodeLabel" class="labelFontColor">
+                        </label>
+                        <select id="ProblemCodeDropDownList" onchange="checkForSelfHelp(this.options[this.selectedIndex].value);">
+                            <option value="-1" class="selectOption"></option>
+                        </select>
+                    </li>
+                    <li id="PriorityRow">
+                        <label id="PriorityLabel">
+                            <span id="PriorityLabelMandatoryLabel" style="color: Red" class="custMandatory">*</span>
+                        </label>
+                        <select id="PriorityDropdown">
+                             <option value="-1">--Select--</option>
+                        </select>
+                    </li>
+                </ul>
+                <!--<table id="EquipmentTable" style="width: 100%;" class="problemCodeTable">
+                    <tr id="ProblemCodeAutocompleteTD">
+                        <td>
+                            <lable id="ProblemCodeAutoCompleteLabel"></lable>
+                            <div  class="problemSearch">
+                            <input type="text" id="ProblemCodeTextBox" onkeyup="GetProbleCodes();" />
+                            </div>
+                            <select id="ProblemCodeAutoComplete" onchange="BindProblemCodeDetails(this);">
+                                <option value="-1" class="selectOption"></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr id="trEquipmentGroup">
+                        <td>-->
+                <!--<label id="EquipmentGroupMSLabel" style="color:Red;">*</label>-->
+                <!--<label id="EquipmentGroupLabel">
+                            </label>
+                            <select id="EquipmentGroupDropDownList" onchange="BindEquipmentDetails(this);">
+                                <option value="-1" class="selectOption"></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr id="trEquipmentSubgroup">
+                        <td>-->
+                <!-- <label id="EquipmentSubGroupMSLabel" style="color:Red;">*</label>-->
+                <!--<label id="EquipmentSubgroupLabel">
+                            </label>
+                            <select id="EquipmentSubgroupDropDownList" onchange="BindEquipment(this);">
+                                <option value="-1" class="selectOption"></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr id="trProblemCodes">
+                        <td>-->
+                <!--<label id="ProblemCodeMSLabel" style="color:Red;">*</label>-->
+                <!--<label id="ProblemCodeLabel">
+                            </label>
+                            <select id="ProblemCodeDropDownList" onchange="BindEquipmentDetails(this);">
+                                <option value="-1" class="selectOption"></option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>-->
+            </div>
+            <div data-role="collapsible" id="Collapsible3" class="collapsible">
+                <h4 id="CASCollapsible">
+                </h4>
+                <div data-role="content" class="editor-wrapper">
+                    <div class="editor-container">
+                        <table id="dynamicCASItemslist" style="width: 100%;">
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="addAttchmentPanel">
+                <label class="checkbox" id="addAttachemntLabel">
+                    <input type="checkbox" id="addAttachmentCheckBox" onchange="checkAddAttachemnt()" />
+                </label>
+                <div id="addAttachemntContainer">
+                    <div id="selectedImageDiv" class="attachmentContainer">
+                        <img style="width: 60px; height: 60px;" id="smallImage" src="" />
+                    </div>
+                    <div class="ui-grid-a">
+                        <div class="ui-block-a serviceRequestAttachment">
+                            <img style="width: 50px; height: 50px;" onclick="captureWorkOrderAttachmentPhoto();"
+                                src="css/images/camera.png" />
+                        </div>
+                        <div class="ui-block-b serviceRequestAttachment">
+                            <img style="width: 50px; height: 50px;" onclick="getWorkOrderPhotoAttachment();"
+                                src="css/images/gallery.png" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="GeneralDescriptionDiv">
+                <label id="ServiceRquestLabel">
+                </label>
+                <!--<div id="descriptionAreaDiv">-->
+                <!--<a href="#" class="microphone" data-corners="false" data-shadow="false" id="microphoneButton" onclick="recordVoice();"></a>-->
+                <!--<textarea rows="5" cols="26" maxlength="400" onkeydown="limitDes(this);" onkeyup="limitDes(this);" data-role="none" id="DescriptionText"></textarea>-->
+                <textarea rows="5" cols="26" data-role="none" id="DescriptionText" name="DescriptionText"
+                    maxlength="400" onkeyup="textareaLimitCR(400)" onkeydown="textareaLimitCR(400)"></textarea>
+                <img id="microphoneImage" onclick="recordVoice();" src="css/images/Microphone.png" />
+                <!--</div>-->
+            </div>
+            <label id="recordVoiceLabel" style="display: none; color: red">
+                Recording your voice..</label>
+        </div>
+        <div class="btn-panel">
+            <a href="#" data-role="button" data-inline="true" onclick="CreateWorkOrder();" id="RequestServiceButton">
+            </a><a href="#" data-role="button" data-inline="true" data-theme="b" id="ResetButton"
+                onclick="ResetData();"></a>
+        </div>
+        <!--</form>-->
+        <div data-role="collapsible-set" data-theme="c" data-content-theme="d" data-corners="false"
+            class="ms-accord-details">
+            <div data-role="collapsible" id="RecentRequestCollapsible">
+                <h4 id="workOrderList">
+                </h4>
+                <ul class="recentRequestListView" data-role="listview">
+                </ul>
+            </div>
+        </div>
+        <!-- <div id="confirm" data-role="popup" data-theme="none" class='ui-content messagePopup'>
+            <div data-role='header' role='banner' class='ui-header ui-bar-inherit'>
+                <h1 class='popupHeaderConfirm'>
+                </h1 id="confirmHeader">
+                </div>
+            <span class='messagePopUpContext' id="deleteConfirmLabel"></span>
+            <div class="ui-grid-a">
+                <div class="ui-block-a">
+                    <a id="yesButton" data-role="button" data-mini="true" data-shadow="false" data-theme="b"
+                        data-rel="back"></a>
+                </div>
+                <div class="ui-block-b">
+                    <a id="cancelButton" data-role="button" data-mini="true" data-shadow="false" data-theme="b"
+                        data-rel="back"></a>
+                </div>
+            </div>
+        </div>-->
+        <!-- /popup -->
+        <!-- <form id="frmAlert" method="post">
+        <div data-role="popup" id="pop_Alert" data-overlay-theme="a" data-theme="c">
+            <div data-theme="c" data-content-theme="d" data-corners="false">
+                <div data-role="content" class="editor-wrapper">
+                    <div class="editor-container">
+                        <form>
+                        <div class="ui-grid-a">
+                            <label id="AlertMessageLabel">
+                            </label>
+                            <div class="btn-panel">
+                            <button id="ConfirmButton" onclick="ConfirmButtonClick();">OK</button>
+                            <a href="#" data-role="button" data-inline="true" id="OKButton" onclick="OKButtonClick();">OK</a><a href="#" data-role="button"
+                                    data-inline="true" data-theme="b" id="CloseButton" onclick="NoAction();">Close</a>
+                           </div>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </form>-->
+        <input type="hidden" id="hiddenLevel1Dropdown" name="hiddenLevel1Dropdown" />
+        <input type="hidden" id="hiddenLevel2Dropdown" name="hiddenLevel2Dropdown" />
+        <input type="hidden" id="hiddenLevel3Dropdown" name="hiddenLevel3Dropdown" />
+        <input type="hidden" id="hiddenLevel4Dropdown" name="hiddenLevel4Dropdown" />
+        <input type="hidden" id="hiddenLocation" name="hiddenLocation" />
+        <input type="hidden" id="hiddenSearchText" name="hiddenSearchText" />
+        <input type="hidden" id="hiddenSelect" name="hiddenSelect" />
+        <input type="hidden" id="hiddenPriorityValue" name="hiddenPriorityValue" />
+        <!--   </form>-->
+    </div>
+</body>
+</html>

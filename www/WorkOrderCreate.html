@@ -1,0 +1,145 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <title>mainStream - Work Order Verification</title>
+    <link rel="stylesheet" href="themes/crossform/css/style.css">
+    <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css">
+    <link rel="shortcut icon" href="favicon.ico">
+    <script src="js/jquery-1.11.2.min.js" type="text/javascript"></script>
+        <script src="js/jquery.mobile-1.4.5.min.js"></script>
+</head>
+
+<body>
+    <div data-role="page" class="ce-inventory content-section">
+        
+        <div data-role="header" class="ms-inner-header" data-position="fixed">
+			<a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-barcode" data-corners="false" onclick="window.location = 'help.html';">Scan</a>
+            <h1>Create Service</h1>
+             <a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-btn-icon-notext ui-icon-help" data-corners="false" onclick="window.location = 'help.html';">Help</a>
+            <a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-btn-icon-notext ui-icon-logout" data-corners="false" onclick="window.location = 'login.html';">Logout</a>
+        </div>
+        <!-- /header -->
+        <!-- /navbar -->
+        <div data-role="collapsible-set" data-theme="c" data-content-theme="d" data-corners="false" class="ms-accord-details ms-grid-content">
+            <div data-role="collapsible">
+                <h4>Account Information</h4>
+                <table width="100%" class="custom-table" border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td class="left-block">Profile Name</td>
+                        <td class="right-block">Sherley@localhost.com</td>
+                    </tr>
+                    <tr>
+                        <td class="left-block">Caller Name</td>
+                        <td class="right-block">Ronald W Weisley</td>
+                    </tr>
+                    <tr>
+                        <td class="left-block">Contact Name</td>
+                        <td class="right-block">Ronald W Weisley </td>
+                    </tr>
+                    <tr>
+                        <td class="left-block">Contact Phone</td>
+                        <td class="right-block">896-968-9655 </td>
+                    </tr>
+                    <tr>
+                        <td class="left-block">Phone Number </td>
+                        <td class="right-block">896-968-9655</td>
+                    </tr>
+                </table>
+            </div>
+			<div data-role="collapsible">
+                <h4>Location Information</h4>
+                <table width="100%" class="custom-table" border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td class="left-block">Property ID</td>
+                        <td class="right-block">345434 </td>
+                    </tr>
+                    <tr>
+                        <td class="left-block">St, City</td>
+                        <td class="right-block">AL, Georgia </td>
+                    </tr>
+                    <tr>
+                        <td class="left-block">Building </td>
+                        <td class="right-block">BB2 </td>
+                    </tr>
+                    <tr>
+                        <td class="left-block">Floor</td>
+                        <td class="right-block">8th floor </td>
+                    </tr>
+                    <tr>
+                        <td class="left-block">Room </td>
+                        <td class="right-block">Achievers</td>
+                    </tr>
+                </table>
+            </div>
+            <div data-role="collapsible">
+                <h4>Problem Code Information</h4>
+                <div data-role="content" class="editor-wrapper">
+                    <div class="editor-container">
+                        <form>
+                            <label for="problemCode">Problem Code:</label>
+                            <input type="text" name="" id="problemCode" value="" />
+                            <label for="selectProblem">Select Problem:</label>
+                            <select id="selectProblem" class="ui-btn-left">
+                                <option value="select">-Select-</option>
+                            </select>
+                            <label for="createGroup">Group:</label>
+                            <input type="text" name="createGroup" id="createGroup" value="" disabled />
+                            <label for="subGroup">Sub Group:</label>
+                            <input type="text" name="subGroup" id="subGroup" value="" disabled />
+                            <label for="problemDescription">Problem Description:</label>
+                            <textarea id="problemDescription"></textarea>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div data-role="collapsible">
+                <h4>CAS</h4>
+                <div data-role="content" class="editor-wrapper">
+                    <div class="editor-container">
+                        <form>
+                            <label for="estimatedServiceCost">Caller Name:</label>
+                            <input type="text" name="" id="callerName" value="" />
+                            <label for="selectProblem">Caller Phone Number:</label>
+							<input type="text" name="" id="callerPhone" value="" />
+							<label for="selectProblem">Caller Email Address:</label>
+							<input type="text" name="" id="callerEmail" value="" />
+                            
+                        </form>
+                    </div>
+                </div>
+            </div>
+			<div data-role="collapsible">
+                <h4>Compactor Pickup</h4>
+                <div data-role="content" class="editor-wrapper">
+                    <div class="editor-container">
+                        <p>Your compactor PSI must read at least 1500 PSI before entering this request. Mervyns is fined for low compactor weights.Compactor pick ups are scheduled for 1 business day delivery.Work orders entered after 3:00 PM PST or on weekends will be processed the following business day.</p>
+						<label for="selectProblem">Additional Instructions:</label>
+						<textarea id="problemDescription"></textarea>
+                    </div>
+                </div>
+            </div>	
+        </div>
+        <div class="btn-panel"> <a href="#" onclick="window.location='WorkOrderDetails.html'" data-role="button" data-inline="true">Save</a> <a href="#" data-role="button" data-inline="true" data-theme="b">Reset</a> </div>
+        <!--<div data-role="footer" class="nav-glyphish-example" data-position="fixed">
+            <!-- /grid-a -->
+            <!--<div data-role="navbar" class="nav-glyphish-example" data-grid="d">
+                <ul id="custom-icon">
+                    <li><a href="#" id="dashboard" data-icon="custom" data-iconshadow="false" onclick="window.location='Details.html'">Dashboard</a></li>
+                    <li><a href="#" onclick="window.location='WorkOrderCreate.html'" class="ui-btn-active" id="services" data-icon="custom" data-iconshadow="false">Service</a></li>
+                    <li><a href="#" id="feedback" onclick="window.location='WorkOrderSearch.html'" data-icon="custom" data-iconshadow="false">Feedback</a></li>
+                    <li><a href="#" id="history" data-icon="custom" data-iconshadow="false" onclick="window.location='WorkOrderSearchHistory.html'">History</a></li>
+                    <li><a href="#" id="profile" data-icon="custom" data-iconshadow="false" onclick="window.location = 'Profile.html';">Profile</a></li>
+                </ul>
+            </div>
+        </div>-->
+		<div data-role="footer" data-position="fixed">
+			<h4><a href="#" onclick="window.location = 'gridView.html';"><img src="images/ui-icon-menu.png" alt="Menu"/></a></h4>
+		</div><!-- /footer -->
+    </div>
+    <!-- /page -->
+</body>
+</html>

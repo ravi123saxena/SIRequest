@@ -1,0 +1,300 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <title>mainStream - Profile</title>
+</head>
+<body>
+    <!-- Profile page -->
+    <div data-role="page" class="ms-inventory content-section" id="editProfilePage" style="overflow: hidden !important;
+        overflow-x: hidden !important;">
+        <!-- jQueryMobile Events -->
+        <script type="text/javascript">
+            // Page before create event for edit profile page
+            $(document).one('pagebeforecreate', "#editProfilePage", function () {
+                if (navigator.onLine) {
+                    getTranslations("EditUser");
+                    var interval = setInterval(function () {
+                        $("div").addClass('ui-disabled');
+                        $.mobile.loading('show', {
+                            text: 'Loading',
+                            textVisible: true,
+                            theme: 'b',
+                            textonly: false,
+                            html: ""
+                        });
+                        clearInterval(interval);
+                    }, 1);
+                } else {
+                    setTimeout(function () {
+                        hideImage();
+                        showErrorPopUp(true, noNetworkTranslation);
+                    }, 1000);
+                }
+
+            });
+
+            // Page show event for edit profile page
+            $(document).one('pageshow', "#editProfilePage", function () {
+                //Hide Logout button for SSO user
+                if (getLocal("SSOUser") === "true") {
+                    $("#logoutButton").hide();
+                    $("#callerName").addClass("ui-disabled");
+                    $("#phoneNum").addClass("ui-disabled");
+                    $("#txtSearchPrf").addClass("ui-disabled");
+                    $("#optCategoryPrf").addClass("ui-disabled");
+                    $("#optCountry").addClass("ui-disabled");
+                    $("#optBuilding").addClass("ui-disabled");
+                    $("#optFloor").addClass("ui-disabled");
+                    $("#optRoom").addClass("ui-disabled");
+                    $("#callerLocation").addClass("ui-disabled");
+                    $("#btnUpdateProfile").addClass("ui-disabled");
+                    $("#btnRestProfile").addClass("ui-disabled");
+                }
+
+                if (navigator.onLine) {
+                    editProfile();
+                    $('#ContactInformationCollapsible .ui-collapsible-heading-toggle').text(getTranslatedValue("ContactInformationLabel"));
+                    $('#RegionlocationHeader .ui-collapsible-heading-toggle').text(getTranslatedValue("RegionalLocationLabel"));
+                    $('#MisscellaneousCollapsible .ui-collapsible-heading-toggle').text(getTranslatedValue("MiscellaneousLabel"));
+                    $("#TyprOfCallerLabel").html(getTranslatedValue("TypeOfCallerLabel"));
+                    $("#btnUpdateProfile").html(getTranslatedValue("SaveButton"));
+                    $("#btnRestProfile").html(getTranslatedValue("ResetButton"));
+                    var pageID = $.mobile.activePage.attr('id');
+                    appName == 'iCRS' ? $("#" + pageID + " #appHeader").text(appHeaderForiOS) : $("#" + pageID + " #appHeader").text(appHeaderForAndroid);
+                    $("#profileHeader").text(getTranslatedValue("profileHeader"));
+                    $("#SuccessMessageLabel").text(getTranslatedValue("SuccessMessageLabel"));
+
+                    SetUpProfileAccess();
+                    BindCallerTyprDropdown();
+                } else {
+                    setTimeout(function () {
+                        hideImage();
+                        showErrorPopUp(true, noNetworkTranslation);
+                    }, 1000);
+                }
+            });
+            
+        </script>
+        <!-- header section -->
+        <div data-role="header" class="ms-inner-header page-fixed-header" data-position="fixed" data-tap-toggle="false"
+            data-update-page-padding="false">
+            <a href="#menu" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-menuBar"
+                data-corners="false"></a>
+                <!--<a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-back-new"
+                    data-corners="false" data-shadow="false" id="backButton"></a>-->   
+                <a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-barcode"
+                    data-corners="false" data-shadow="false" id="scanButton" onclick="scanBarcode();"></a>                             
+            <h1 id="appHeader">
+            </h1>
+            <!--<a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-btn-icon-notext ui-icon-help"
+                data-corners="false" onclick="navigateToHelp();"></a>-->
+            <a href="#" id="logoutButton" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-btn-icon-notext ui-icon-logout"
+                data-corners="false" onclick="logOut();"></a>
+        </div>
+        <!-- /header -->
+		<!-- panel section -->
+        <div data-role="panel" id="menu" data-theme="b" data-display="push">
+            <div class="ui-panel-inner">
+                <!-- This UL is the menu, where the items will be added -->
+                <!-- Make sure you don't add any <li> or any other content inside it! -->
+                <ul data-role="listview" class="mainMenu"></ul>
+            </div>
+        </div>
+        <!-- /panel -->
+        <!-- navigation bar section -->
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#" class="ui-btn-active screenHeader" id="profileHeader"></a></li>
+            </ul>
+        </div>
+        <!-- content section -->
+        <div data-role="collapsible-set" data-theme="c" data-content-theme="d" data-corners="false"
+            class="ms-accord-details ms-grid-content">
+            <div data-role="collapsible" id="ContactInformationCollapsible" data-collapsed="false">
+                <h4 id="ContactInformationLabel">
+                </h4>
+                <!--<div data-role="content" id="contactInfo" class="editor-wrapper">
+                    <table width="100%" id="contactDetails" class="custom-table" border="0" cellpadding="0"
+                        cellspacing="0">
+                    </table>
+                </div>-->
+                <table width="100%" class="custom-table" border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td class="left-block">
+                            <label id="EmailAddressLabel">
+                            </label>
+                        </td>
+                        <td class="right-block" id="EmailaddressValueTd">
+                            <label id="EmailaddressValue">
+                            </label>
+                        </td>
+                    </tr>
+                    <tr id="CallerNameRow">
+                        <td class="left-block" id="CallerNameLabel">
+                            <!--<label id="PhoneNumberMandatoryLabel" style="color: Red" class="custMandatory">*</label>-->
+                            <label id="FullNameLabel">
+                            </label>
+                        </td>
+                        <td class="right-block">
+                            <input type="text" id="callerName" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="left-block">
+                            <label id="PhoneNumberLabel">
+                            </label>
+                        </td>
+                        <td class="right-block">
+                            <input type="text" id="phoneNum" class="Phone" />
+                        </td>
+                    </tr>
+                    <!--<div id="ProfileNotesRow">-->
+                    <tr id="ProfileNotesRow">
+                        <td class="left-block">
+                            <label id="ProfileNotesLabel">
+                            </label>
+                        </td>
+                        <td class="right-block">
+                            <!-- <input type="text" id="txtProfileNotes" />-->
+                            <textarea style="overflow-y: scroll; height: 100px !important; width: 100% !important;
+                                resize: none;" rows="3" cols="30" data-role="none" id="txtProfileNotes" onkeydown="textareaLimitCR(400)"
+                                onkeyup="textareaLimitCR(400)" maxlength="400"></textarea>
+                            <!--<textarea rows="3" cols="20" data-role="none" maxlength="400" name="textarea" id="txtProfileNotes" onkeyup="textareaLimitCR(400)" onkeydown="textareaLimitCR(400)"></textarea>-->
+                        </td>
+                    </tr>
+                    <!-- </div>  -->
+                </table>
+            </div>
+            <!-- <div data-role="collapsible" id="RegionCollapsible">
+                <h4 id="H1">
+                </h4>
+                <ul data-role="listview" data-inset="true" id="Ul1">
+                    <li>
+                        <label id="Level1" class="labelFontColor">
+                            <label id="Level1DropDownMandatorySymbol" class="custMandatory">
+                                *</label>
+                        </label>
+                        <select id="optCountry">
+                        </select>
+                    </li>
+                </ul>
+            </div>-->
+            <div data-role="collapsible">
+                <h4 id="RegionlocationHeader">
+                </h4>
+                <ul data-role="listview" data-inset="true">
+                    <li>
+                        <div id="searchEditProfileLevels">
+                            <label id="searchLbl" class="labelFontColor">
+                            </label>
+                            <input type="text" id="txtSearchPrf" onkeyup="ResetCategoryDropDownEditProfile();" />
+                            <label id="CategoryLabel" class="labelFontColor">
+                            </label>
+                            <select id="optCategoryPrf" onchange="FilterLocationDropdownEditProfile();">
+                            </select>
+                        </div>
+                        <label id="Level1" class="labelFontColor">
+                            <label id="Level1DropDownMandatorySymbol" class="custMandatory">
+                                *</label>
+                        </label>
+                        <select id="optCountry" onchange="BindLevel2DropDownForEdit();">
+                            <!--<option value="-1">--Select--</option>-->
+                        </select>
+                        <label id="Level2" class="labelFontColor">
+                            <label id="Level2DropDownMandatorySymbol" style="color: Red" class="custMandatory">
+                                *</label>
+                        </label>
+                        <select id="optBuilding" onchange="BindFloorEditProfile();">
+                            <!--<option value="-1">--Select--</option>-->
+                        </select>
+                        <label id="Level3" class="labelFontColor">
+                            <label id="Level3DropDownMandatorySymbol" style="color: Red" class="custMandatory">
+                                *</label>
+                        </label>
+                        <select id="optFloor" onchange="BindRoomEditProfile();">
+                            <!--<option value="-1">--Select--</option>-->
+                        </select>
+                        <label id="Level4" class="labelFontColor">
+                            <label id="Level4DropDownMandatorySymbol" style="color: Red" class="custMandatory">
+                                *</label>
+                        </label>
+                        <select id="optRoom">
+                            <!--<option value="-1">--Select--</option>-->
+                        </select>
+                        <div id="LocationDiv">
+                            <label id="Level5" class="labelFontColor">
+                            </label>
+                            <input type="text" id="callerLocation" />
+                        </div>
+                        <div id="CostCenterCompany">
+                            <label id="lblProfileCostCenteCompany" class="labelFontColor">
+                            </label>
+                            <input type="text" id="txtProfCostCenterCompany" />
+                        </div>
+                        <div id="CostCenterLableProfEdit">
+                            <label id="CostCenteProfile" class="labelFontColor">
+                            </label>
+                        </div>
+                        <div id="costCenterDropDown">
+                            <select id="optCostCenter">
+                            </select>
+                        </div>
+                        <div id="costCenterTextBox">
+                            <input type="text" id="txtProfCostCenter" />
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div data-role="collapsible" id="MisscellaneousCollapsible">
+                <h4 id="MiscellaneousLabel">
+                </h4>
+                <ul data-role="listview" data-inset="true" id="miscellaneous">
+                    <li id="miscellaneousTable">
+                        <label id="TyprOfCallerLabel" class="labelFontColor">
+                        </label>
+                        <select id="optCallerType">
+                        </select>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!-- /content -->
+        <!-- button panel section  -->
+        <div class="btn-panel">
+            <a href="#" id="btnUpdateProfile" data-role="button" data-inline="true" onclick="SaveProfileData();">
+            </a><a href="#" data-role="button" data-inline="true" data-theme="b" id="btnRestProfile"
+                onclick="ResetEditProfileData();"></a>
+        </div>
+        <!-- /button panel -->
+        <!-- panel section -->
+        <div data-role="panel" id="menu" data-theme="b" data-display="push">
+            <div class="ui-panel-inner">
+                <ul data-role="listview" class="mainMenu"></ul>
+            </div>
+        </div>
+        <div data-role="popup" id="profilePopup" data-dismissible="false" data-overlay-theme="a"
+            data-position-to="window">
+            <!--<a href="#" data-rel="back" data-role="button" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-btn-icon-notext ui-icon-logout"></a>-->
+            <div data-role="header" class="ms-inner-header">
+                <h2>
+                    Confirmation</h2>
+            </div>
+            <div role="main" class="ui-content">
+                <div id="SuccessMessageLabel">
+                </div>
+                <a href="#" data-rel="back" class="ui-btn">Close</a>
+            </div>
+        </div>
+        <!-- /panel -->
+        <input type="hidden" id="hiddenLevel1Dropdown" name="hiddenLevel1Dropdown" />
+        <input type="hidden" id="hiddenLevel2Dropdown" name="hiddenLevel2Dropdown" />
+        <input type="hidden" id="hiddenLevel3Dropdown" name="hiddenLevel3Dropdown" />
+        <input type="hidden" id="hiddenLevel4Dropdown" name="hiddenLevel4Dropdown" />
+        <input type="hidden" id="hiddenCostCenter" name="hiddenCostCenter" />
+    </div>
+    <!-- /page
+    -->
+</body>
+</html>

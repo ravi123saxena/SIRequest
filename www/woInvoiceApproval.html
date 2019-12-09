@@ -1,0 +1,112 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+</head>
+<body>
+    <!-- Invoice Approval page -->
+    <div data-role="page" class="ms-inventory content-section" id="invoiceApprovalPage">
+        <!-- jQueryMobile Events -->
+        <script type="text/javascript">
+            // Page before create event for Invoice Approval page
+            $(document).one('pagebeforecreate', "#invoiceApprovalPage", function () {
+
+                if (navigator.onLine) {
+                    getTranslations("invoiceApprovalPage");
+                    var interval = setTimeout(function () {
+                        $("div").addClass('ui-disabled');
+                        $.mobile.loading('show', {
+                            text: 'Loading',
+                            textVisible: true,
+                            theme: 'b',
+                            textonly: false,
+                            html: ""
+                        });
+                        clearInterval(interval);
+                    }, 1);
+                    getInvoiceApprovals('2');
+                    $("#invoiceApprovalMoreButton").hide();
+                    $("#invoiceApprovalMoreButton").attr('data-nextPage', '1');
+                } else {
+                    setTimeout(function () {
+                        hideImage();
+                        showErrorPopUp(true, noNetworkTranslation);
+                    }, 1000);
+                }
+            });
+            // Page show event for Work order needing attention page
+            $(document).one('pageshow', "#invoiceApprovalPage", function () {
+                //Hide Logout button for SSO user
+                if (getLocal("SSOUser") === "true") {
+                    $("#logoutButton").hide();
+                }
+
+                // Used to configure back button in different platforms.
+                configureBackButton();
+
+                if (navigator.onLine) {
+                    $('#invoiceApprovalHeader').text(getTranslatedValue('invoiceApprovalHeader'));
+                    $('#invoiceApprovalMoreButton').text(getTranslatedValue('invoiceApprovalMoreButton'));
+                    $('#notInvoiceFoundList').text(getTranslatedValue('notInvoiceFoundList'));
+                    var pageID = $.mobile.activePage.attr('id');
+                    appName == 'iCRS' ? $("#" + pageID + " #appHeader").text(appHeaderForiOS) : $("#" + pageID + " #appHeader").text(appHeaderForAndroid);
+                    setLocal("NavigateTo", "Main");
+                } else {
+                    setTimeout(function () {
+                        hideImage();
+                        showErrorPopUp(true, noNetworkTranslation);
+                    }, 1000);
+                }
+            });
+            
+        </script>
+        <!-- Header section -->
+        <div data-role="header" class="ms-inner-header" data-position="fixed">
+           <a href="#menu" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-menuBar"
+                data-corners="false" id="menuBar">Menu</a>
+           <a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-back-new" data-corners="false" 
+           data-shadow="false" data-rel="back" id="backButton"></a>
+           <a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-barcode"
+                   data-corners="false" data-shadow="false" id="scanButton" onclick="scanBarcode();"></a>
+            <h1 id="appHeader">
+                </h1>
+            <!--<a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-btn-icon-notext ui-icon-help"
+                data-corners="false" onclick="navigateToHelp();"></a>-->
+                <a href="#" id="logoutButton" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-btn-icon-notext ui-icon-logout"
+                    data-corners="false" onclick="logOut();"></a>
+        </div>
+        <!-- /Header section-->
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#" class="ui-btn-active screenHeader" id="invoiceApprovalHeader"></a></li>
+            </ul>
+        </div>
+        <!-- panel Section -->
+        <div data-role="panel" id="menu" data-theme="b" data-display="push">
+            <div class="ui-panel-inner">
+                <!-- This UL is the menu, where the items will be added -->
+                <!-- Make sure you don't add any <li> or any other content inside it! -->
+                <ul data-role="listview" class="mainMenu"></ul>
+            </div>
+        </div>
+        <!-- /panel -->
+        <!-- Page content -->
+       <div>
+             <ul data-role="listview" id="workOrderList">
+        </div>
+        
+        <div class="editor-wrapper">
+            <a href="#" class="ui-btn custMore buttonColor" id="invoiceApprovalMoreButton" onclick="loadMoreInvoiceApproval(this);"
+                data-nextpage='1'></a>
+        </div>
+        <div data-theme="c" class="ms-norecords-info">
+            <ul data-role="listview">
+                <li id="notInvoiceFoundList"></li>
+            </ul>
+        </div>
+        <!-- /Page content -->
+    </div>
+    <!-- /Work order Approval page -->
+</body>
+</html>

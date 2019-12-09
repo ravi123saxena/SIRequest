@@ -1,0 +1,286 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <title>mainStream - Quick Links</title>
+</head>
+<body>
+    <!-- Quick Links page -->
+    <div data-role="page" id="quickLinks" class="ms-inventory content-section">
+        <!-- jQueryMobile Events -->
+        <script>
+            // Page before create event for quicklinks page
+            $(document).one('pagebeforecreate', "#quickLinks", function () {
+                if (navigator.onLine) {
+                    try {
+                        var interval = setTimeout(function () {
+                            $("div").addClass('ui-disabled');
+                            $.mobile.loading('show', {
+                                text: 'Loading',
+                                textVisible: true,
+                                theme: 'b',
+                                textonly: false,
+                                html: ""
+                            });
+                            clearInterval(interval);
+                        }, 1);
+
+                        getTranslations("quickLinksPage");
+
+                        quickLinksDashboard();
+                        getCount();
+                        loadFeedbackWO();
+                    }
+                    catch (e) {
+                        LogErrors(e, 'QuickLinks.html', 'pagebeforecreate');
+                    }
+
+                } else {
+                    setTimeout(function () {
+                        hideImage();
+                        showErrorPopUp(true, noNetworkTranslation);
+                    }, 1000);
+                }
+            });
+
+            /*  $(document).one('pagebeforeshow', function (event, data) {
+                  //console.log("the previous page was: " + data.prevPage.attr('id'));
+                  setLocal("PreviousPage", data.prevPage.attr('id').toLowerCase());
+                  if (!IsStringNullOrEmpty(getLocal("PreviousPage")) && getLocal("PreviousPage") != "splash") {
+                      getMyLocation();
+                      getLocationAddress(GetQuickLinkDetails);
+                  } else {
+                      quickLinksDashboard();
+                  }
+              });*/
+
+            // Page show event for quicklinks page
+            $(document).one('pageshow', "#quickLinks", function () {
+                //Hide Logout button for SSO user
+                if (getLocal("SSOUser") === "true") {
+                    $("#logoutButton").hide();
+                }
+
+                setTimeout(function () {
+                    if (decryptStr(getLocal("iCRS_SSOLogoutButton")).toLowerCase() == "true") {
+                        $("#logoutButton").show();
+                    }
+                }, 1500);
+
+                $("#menu").panel({
+                    beforeopen: function (event, ui) {
+                        $(".lSAction").hide();
+                    }
+                });
+
+                $("#menu").panel({
+                    beforeclose: function (event, ui) {
+                        $(".lSAction").show();
+                    }
+                });
+
+                if (navigator.onLine) {
+                    getLocationAddress();
+                    $("#welMsg").html('');
+                    $("#workAtten").on("click", function () {
+                        setLocal("selectedScreen", "Work Orders Needing Attention");
+                        setLocal("woNeedingAttentionFrom", $.mobile.activePage.attr('id'));
+                        setLocal("approvalOption", '');
+                        setTimeout(function () {
+                            $.mobile.changePage("woNeedingAttention.html", "fade");
+                        }, 500);
+                    });
+                    $("#feedbackWorkOrdersCount").on("click", function () {
+                        $.mobile.changePage("requiredFeedbackWO.html", "fade");
+                    });
+                    setTimeout(function () {
+
+                        var pageID = $.mobile.activePage.attr('id');
+                        $("#welMsg").html('<span>' + getTranslatedValue("welcomeBackLabel") + ', ' + decryptStr(getLocal("Username")) + '</span>');
+                        //$("#" + pageID + " #appHeader").text("iCRS");
+                        //appName == 'iCRS' ? $("#appHeader").text(appHeaderForiOS) : $("#appHeader").text(appHeaderForAndroid);
+                        $("#currentLocation").text(getTranslatedValue("localtionLabel") + ": "
+                            + (IsStringNullOrEmpty(getLocal("CurrentLocationDetails")) ? (IsStringNullOrEmpty(getLocal("Level2DescriptionOfCaller")) ? (IsStringNullOrEmpty(getLocal("currentLocationAddress")) ? "(" + getTranslatedValue("gpsNotActive") + ")" : getLocal("currentLocationAddress")) : getLocal("Level2DescriptionOfCaller")) : getLocal("CurrentLocationDetails")));
+                        $("#feedbackWorkOrdersCount").text(getTranslatedValue("feedbackWorkOrderLabel") + '  (' + getLocal("feedbackCount") + ')');
+                        $("#workAtten").text(getTranslatedValue("woNeedingAttentionLabel") + '  (' + getLocal("woCount") + ')');
+                        $("#okButton").text(getTranslatedValue("okButton"));
+                        appName == 'iCRS' ? $("#" + pageID + " #appHeader").text(appHeaderForiOS) : $("#" + pageID + " #appHeader").text(appHeaderForAndroid);
+                        if (decryptStr(getLocal('ShowWONeedingAttentionLink')) === "0") {
+                            $("#workAtten").hide();
+                        }
+
+                        if (decryptStr(getLocal('ShowWOReadyForFeedbackLink')) === "0") {
+                            $("#feedbackWorkOrdersCount").hide();
+                        }
+
+                        if (getLocal("NotifyUser") == "True") {
+                            setTimeout(function () {
+                                if (navigator.onLine) {
+                                    //alert("Your password will expire in 2 days");
+                                    if (getLocal("NoOfDays") === "1") {
+                                        $("#notifyUserLabel").text(getTranslatedValue("notifyUserLabel") + ' ' + getLocal("NoOfDays") + ' ' + getTranslatedValue("dayLabel"));
+                                    }
+                                    else if (getLocal("NoOfDays") === "0") {
+                                        $("#notifyUserLabel").text(getTranslatedValue("passwordExpireTodayLabel"));
+                                    }
+                                    else {
+                                        $("#notifyUserLabel").text(getTranslatedValue("notifyUserLabel") + ' ' + getLocal("NoOfDays") + ' ' + getTranslatedValue("daysLabel"));
+                                    }
+                                    $("#notificationHeader").text(getTranslatedValue("notificationHeader"));
+                                    $("#notifyPopup").popup("open");
+                                    setLocal("NotifyUser", "");
+                                }
+                                else {
+                                    setTimeout(function () {
+                                        hideImage();
+                                        showErrorPopUp(true, noNetworkTranslation);
+                                    }, 500);
+                                }
+
+                            }, 500);
+                        }
+                        else {
+                            setLocal("NotifyUser", "");
+                        }
+
+                    }, 500);  //4000
+                    setLocal("approvalOption", '');
+
+                } else {
+                    setTimeout(function () {
+                        showErrorPopUp(true, noNetworkTranslation);
+                    }, 500);
+                }
+                setTimeout(function () {
+
+                    var $gallery = $("#content-slider").lightSlider({
+                        item: 4,
+                        loop: false,
+                        slideMove: 2,
+                        easing: 'cubic-bezier(0.25, 0, 0.25, 1)',
+                        speed: 600,
+                        responsive: [
+                            {
+                                breakpoint: 800,
+                                settings: {
+                                    item: 2,
+                                    slideMove: 1,
+                                    slideMargin: 6
+                                }
+                            },
+                            {
+                                breakpoint: 480,
+                                settings: {
+                                    item: 2,
+                                    slideMove: 1
+                                }
+                            }
+                        ]
+                    });
+
+                    $(window).resize(function () {
+                        $lightSlider = $gallery.find('.lightSlider');
+                        $lightSlider.css('height', $lightSlider.find('.lslide').first().outerHeight(true));
+                    });
+
+                    //$(".lSPrev").hide();
+                }, 900);
+
+                setTimeout(function () {
+                    var wh = window.innerHeight;
+                    var hh = document.getElementsByClassName("page-fixed-header")[0].offsetHeight;
+                    var wmh = document.getElementById("welMsg").offsetHeight;
+                    var fh = document.getElementsByClassName("page-fixed-footer")[0].offsetHeight;
+
+                    var pageHeight = parseInt(wh) - parseInt(hh) - parseInt(fh);
+                    $("#quickLinks").height(pageHeight);
+
+                    $(".lSSlideOuter").height(pageHeight - wmh);
+                    $(".lSSlideWrapper, #content-slider, #content-slider > ul").height(pageHeight - wmh - 20);
+                    //hideImage();
+
+                }, 1200);
+
+
+            });
+
+            $(window).resize(function () {
+                var wh = window.innerHeight;
+                var hh = document.getElementsByClassName("page-fixed-header")[0].offsetHeight;
+                var wmh = document.getElementById("welMsg").offsetHeight;
+                var fh = document.getElementsByClassName("page-fixed-footer")[0].offsetHeight;
+
+                var pageHeight = parseInt(wh) - parseInt(hh) - parseInt(fh);
+                $("#quickLinks").height(pageHeight);
+
+                $(".lSSlideOuter").height(pageHeight - wmh);
+                $(".lSSlideWrapper, #content-slider, #content-slider > ul").height(pageHeight - wmh - 20);
+            });
+
+        </script>
+        <!-- header section -->
+        <div data-role="header" class="ms-inner-header page-fixed-header" data-position="fixed" data-tap-toggle="false"
+             data-update-page-padding="false">
+            <a href="#menu" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-menuBar"
+               data-corners="false"></a>
+            <!--<a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-back-new"
+                data-corners="false" data-shadow="false" id="backButton"></a>-->
+            <a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-barcode"
+               data-corners="false" data-shadow="false" id="scanButton" onclick="scanBarcode();"></a>
+            <h1 id="appHeader"></h1>
+            <!--<a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-btn-icon-notext ui-icon-help"
+                data-corners="false" onclick="navigateToHelp();"></a>-->
+            <a href="#" id="logoutButton" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-btn-icon-notext ui-icon-logout"
+               data-corners="false" onclick="logOut();"></a>
+        </div>
+        <!-- /header -->
+        <!-- panel section -->
+        <div data-role="panel" id="menu" data-theme="b" data-display="push">
+            <div class="ui-panel-inner">
+                <!-- This UL is the menu, where the items will be added -->
+                <!-- Make sure you don't add any <li> or any other content inside it! -->
+                <ul data-role="listview" class="mainMenu"></ul>
+            </div>
+        </div>
+        <!-- /panel -->
+        <!-- navigation bar section -->
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#" id="welMsg" class="ui-btn-active screenHeader"></a></li>
+            </ul>
+        </div>
+        <!-- /navbar -->
+        <!-- menu section -->
+        <!-- <div>    -->
+        <div id="content-slider" class="content-slider">
+        </div>
+        <!-- </div>-->
+        <div data-role='popup' id="notifyPopup" data-dismissible='false' class='ui-content messagePopup'
+             data-history='false'>
+            <div data-role='header' role='banner' class='ui-header ui-bar-inherit notify'>
+                <h1 class='popupHeaderConfirm' id="notificationHeader"></h1>
+            </div>
+            <span class='messagePopUpContext' id="notifyUserLabel"></span><a href='#' id="okButton" class='ui-btn ui-btn-inline newBtn'
+                                                                             data-rel="back">Ok</a>
+        </div>
+        <!-- /menu -->
+        <!-- footer section -->
+        <div data-role="footer" class="nav-glyphish-example page-fixed-footer" data-position="fixed" data-tap-toggle="false"
+             data-update-page-padding="false">
+            <!-- /grid-a -->
+            <div class="newFooter">
+                <h4 class="ui-title" role="heading" aria-level="1">
+                    <span id="currentLocation"></span>
+
+                    <a href="" id="workAtten"></a>
+
+                    <a href="" id="feedbackWorkOrdersCount"></a>
+                </h4>
+            </div>
+        </div>
+        <!-- /footer -->
+    </div>
+    <!-- /page -->
+</body>
+</html>

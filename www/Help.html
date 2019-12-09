@@ -1,0 +1,106 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <title>mainStream - Help</title>
+  </head>
+
+<body>
+    <div data-role="page" class="ce-inventory content-section" id="helpPage">
+       <script>
+            // Page show event for work order detail page
+            $(document).one('pageshow', "#helpPage", function () {
+                if (navigator.onLine) {
+                    var pageID = $.mobile.activePage.attr('id');
+                    appName == 'iCRS' ? $("#" + pageID + " #appHeader").text(appHeaderForiOS) : $("#" + pageID + " #appHeader").text(appHeaderForAndroid);
+                } else {
+                    setTimeout(function () {
+                        showErrorPopUp(true, noNetworkTranslation);
+                    }, 1000);
+                }
+            });
+        </script>
+        <div data-role="header" class="ms-inner-header" data-position="fixed">
+		 <a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-icon-back-new"
+                data-corners="false" data-shadow="false" data-rel="back">Back</a>
+            <h1 id= 'appHeader'></h1>
+            
+            <a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-icon-logout" data-corners="false" onclick="logOut();">LogOut</a>
+        </div>
+        <!-- /header -->
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#" class="ui-btn-active screenHeader" id="helpTitle">Help</a>
+                </li>
+            </ul>
+        </div>
+        <!-- /navbar -->
+        <div data-role="collapsible-set" data-theme="c" data-content-theme="d" data-corners="false" class="ms-accord-details ms-list-info">
+            <div data-role="collapsible">
+                <h4>Dashboard</h4>
+                <ul data-role="listview">
+                    <li>
+                        This is a completely basic popup, no options set. This is a completely basic popup,
+                        no options set. This is a completely basic popup, no options set. This is a completely
+                        basic popup, no options set. This is a completely basic popup, no options set.This
+                        is a completely basic popup, no options set. This is a completely basic popup, no
+                        options set. This is a completely basic popup, no options set.This is a completely
+                        basic popup, no options set. This is a completely basic popup, no options set. This
+                        is a completely basic popup, no options set. This is a completely basic popup, no
+                        options set.
+                    </li>
+                </ul>
+            </div>
+            <div data-role="collapsible">
+                <h4>Service</h4>
+                <ul data-role="listview">
+                    <li>
+                        This is a completely basic popup, no options set. This is a completely basic popup,
+                        no options set. This is a completely basic popup, no options set. This is a completely
+                        basic popup, no options set. This is a completely basic popup, no options set.This
+                        is a completely basic popup, no options set. This is a completely basic popup, no
+                        options set. This is a completely basic popup, no options set.This is a completely
+                        basic popup, no options set. This is a completely basic popup, no options set. This
+                        is a completely basic popup, no options set. This is a completely basic popup, no
+                        options set.
+                    </li>
+                </ul>
+            </div>
+            <div data-role="collapsible">
+                <h4>Feedback</h4>
+                <ul data-role="listview">
+                    <li>
+                        This is a completely basic popup, no options set. This is a completely basic popup,
+                        no options set. This is a completely basic popup, no options set. This is a completely
+                        basic popup, no options set. This is a completely basic popup, no options set.This
+                        is a completely basic popup, no options set. This is a completely basic popup, no
+                        options set. This is a completely basic popup, no options set.This is a completely
+                        basic popup, no options set. This is a completely basic popup, no options set. This
+                        is a completely basic popup, no options set. This is a completely basic popup, no
+                        options set.
+                    </li>
+                </ul>
+            </div>
+            <div data-role="collapsible">
+                <h4>History</h4>
+                <ul data-role="listview">
+                    <li>
+                        This is a completely basic popup, no options set. This is a completely basic popup,
+                        no options set. This is a completely basic popup, no options set. This is a completely
+                        basic popup, no options set. This is a completely basic popup, no options set.This
+                        is a completely basic popup, no options set. This is a completely basic popup, no
+                        options set. This is a completely basic popup, no options set.This is a completely
+                        basic popup, no options set. This is a completely basic popup, no options set. This
+                        is a completely basic popup, no options set. This is a completely basic popup, no
+                        options set.
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    <!-- /page -->
+</body>
+</html>

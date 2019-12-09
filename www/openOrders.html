@@ -1,0 +1,105 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">   
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <title>mainStream - My Open Orders</title>
+</head>
+<body>
+    <!-- Open Orders (Not completed) page -->
+    <div data-role="page" class="ms-inventory content-section" id="openOrder">
+        <!-- jQueryMobile Events -->
+        <script type="text/javascript">
+            // Page before create event for open orders page
+            $(document).one('pagebeforecreate', "#openOrder", function () {
+                if (navigator.onLine) {
+                    getTranslations("HomeScreen_MyOpenOrders_NotCompleted");
+                    $("#moreOpenWorkOrdersButton").hide();
+                    $(".ms-noworkorders-info").hide();
+                } else {
+                    setTimeout(function () {
+                        hideImage();
+                        showErrorPopUp(true, noNetworkTranslation);
+                    }, 1000);
+                }
+
+            });
+            // Page show event for open orders page
+            $(document).one('pageshow', "#openOrder", function () {
+                //Hide Logout button for SSO user
+                if (getLocal("SSOUser") === "true") {
+                    $("#logoutButton").hide();
+                }
+
+                // Used to configure back button in different platforms.
+                configureBackButton();
+
+                if (navigator.onLine) {
+                    //setTimeout(function () {
+                    $("#openOrdersTitle").text(decryptStr(getLocal("MSIClientCode")) === "IO" ? getTranslatedValue("openOrdersTitleIO") : getTranslatedValue("openOrdersTitle"));
+                    $("#moreOpenWorkOrdersButton").text(getTranslatedValue("MoreLabel"));
+                    $("#noworkOrdersLabel").text(getTranslatedValue("NoWorkOrdersLabel"));
+                    var pageID = $.mobile.activePage.attr('id');
+                    appName == 'iCRS' ? $("#" + pageID + " #appHeader").text(appHeaderForiOS) : $("#" + pageID + " #appHeader").text(appHeaderForAndroid);
+                    //}, 500);
+                    openOrders();
+                } else {
+                    setTimeout(function () {
+                        showErrorPopUp(true, noNetworkTranslation);
+                    }, 1000);
+                }
+            });
+        </script>
+        <!-- header section -->
+        <div data-role="header" class="ms-inner-header" data-position="fixed">
+            <a href="#menu" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-menuBar"
+                data-corners="false" id="menuBar">Menu</a>
+            <a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-back-new"
+                data-corners="false" data-shadow="false" data-rel="back" id="backButton">Back</a>
+            <a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-barcode"
+                   data-corners="false" data-shadow="false" id="scanButton" onclick="scanBarcode();"></a> 
+            <h1 id="appHeader">
+            </h1>
+            <!--<a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-icon-help"
+                data-corners="false" onclick="navigateToHelp();">Help</a>--> 
+                <a href="#" id="logoutButton" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-icon-logout"
+                    data-corners="false" onclick="logOut();">Logout</a>
+        </div>
+        <!-- /header -->
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#" class="ui-btn-active screenHeader" id="openOrdersTitle"></a></li>
+            </ul>
+        </div>
+         <!-- panel Section -->
+        <div data-role="panel" id="menu" data-theme="b" data-display="push">
+            <div class="ui-panel-inner">
+                <!-- This UL is the menu, where the items will be added -->
+                <!-- Make sure you don't add any <li> or any other content inside it! -->
+                <ul data-role="listview" class="mainMenu"></ul>
+            </div>
+        </div>
+        <!-- /panel -->
+        <!-- content section -->
+        <div data-role="collapsible-set" data-theme="c" data-content-theme="d" data-corners="false"
+            class="ms-accord-details">
+            <ul class="openOrdersList" data-role="listview"></ul>
+        </div>
+        <!-- /content -->
+        <!-- more section -->
+        <div class="editor-wrapper">
+            <a href="#" class="ui-btn custMore buttonColor" id="moreOpenWorkOrdersButton" onclick="loadMoreOpenWorkOrders(this);"
+                data-nextpage='1'></a>
+        </div>
+        <!-- /more -->
+        <!-- no work orders section -->
+        <div data-theme="c" class="ms-noworkorders-info">
+            <ul data-role="listview">
+                <li id="noworkOrdersLabel"></li>
+            </ul>
+        </div>
+        <!-- /no work orders -->
+    </div>
+    <!-- /page -->
+</body>
+</html>

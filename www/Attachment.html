@@ -1,0 +1,173 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <title>mainStream - Login</title>
+</head>
+<body>
+    <!-- Attachment page -->
+    <div data-role="page" class="ce-inventory content-section" id="attachmentPage">
+        <!-- jQueryMobile Events -->
+        <script type="text/javascript">
+            // Page before create event for Attchment page
+            $(document).one('pagebeforecreate', "#attachmentPage", function () {
+                debugger;
+                if (navigator.onLine) {
+                    loadingImage();
+                    getTranslations("attachmentPage");
+                    $("#selectedImageDiv").hide();
+                    $("#noAttachemnt").hide();
+                    $("#attachmentListDiv").hide();
+                    $("#attachmentMoreButton").hide();
+                    $("#attachmentErrorMessageLabel").hide();
+                    
+                    //Hide Logout button for SSO user
+                    if (getLocal("SSOUser") === "true") {
+                        $("#logoutButton").hide();
+                    }
+
+                } else {
+                    setTimeout(function () {
+                        hideImage();
+                        showErrorPopUp(true, noNetworkTranslation);
+                    }, 1000);
+                }
+
+            });
+            // Page show event for Attachment page
+            $(document).one('pageshow', "#attachmentPage", function () {
+                if (navigator.onLine) {
+                    // Used to configure back button in different platforms.
+                    configureBackButton();
+                    getAttachments();
+                    //Translation section
+                    //setTimeout(function () {
+                        $("#noAttachmentList").html(getTranslatedValue("noAttachmentList"));
+                        $("#addAttachmentHeader").html(getTranslatedValue("addAttachmentHeader"));
+                        $("#addButton").text(getTranslatedValue("addButton"));
+                        $("#descriptionLabel").html("<span style='color:red;'>*</span>" + getTranslatedValue("descriptionLabel"));
+                        $("#saveButton").text(getTranslatedValue("saveButton"));
+                        $("#attachmentMoreButton").text(getTranslatedValue("attachmentMoreButton"));
+                        var pageID = $.mobile.activePage.attr('id');
+                        appName == 'iCRS' ? $("#" + pageID + " #appHeader").text(appHeaderForiOS) : $("#" + pageID + " #appHeader").text(appHeaderForAndroid);
+                    //}, 1000);
+                    $("#attachmentHeader").html(getLocal("woID"));
+                } else {
+                    setTimeout(function () {
+                        hideImage();
+                        showErrorPopUp(true, noNetworkTranslation);
+                    }, 1000);
+                }
+            });
+
+//            $(document).on('pageshow', '#popup_Add', function () { // the .on() method does require jQuery 1.7 + but this will allow you to have the contained code only run when the #splash page is initialized.
+//                $("#errorMessageLabel").hide();
+//            });
+            //On load of the image it will open a popup
+            $("#attachmentImage").load(function () {
+                $("#imagePopup").popup("open");
+            });
+        </script>
+        <!-- header section -->
+        <div data-role="header" class="ms-inner-header" data-position="fixed">
+            <a href="#menu" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-menuBar"
+                data-corners="false" id="menuBar">Menu</a>
+            <a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-back-new" data-corners="false" 
+            data-shadow="false" data-rel="back" id="backButton">Back</a>
+            <a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-barcode"
+                   data-corners="false" data-shadow="false" id="scanButton" onclick="scanBarcode();"></a>
+            <h1 id="appHeader">
+                </h1>
+           <!-- <a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-btn-icon-notext ui-icon-help"
+                data-corners="false" onclick="navigateToHelp();"></a>-->
+                <a href="#" id="logoutButton" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-btn-icon-notext ui-icon-logout"
+                    data-corners="false" onclick="logOut();"></a>
+        </div>
+        <!-- /header -->
+         <div data-role="navbar">
+            <ul>
+                <li><a href="#" class="ui-btn-active screenHeader" id="attachmentHeader"></a>
+                </li>
+            </ul>
+        </div>
+        <!-- panel Section -->
+        <div data-role="panel" id="menu" data-theme="b" data-display="push">
+            <div class="ui-panel-inner">
+                <!-- This UL is the menu, where the items will be added -->
+                <!-- Make sure you don't add any <li> or any other content inside it! -->
+                <ul data-role="listview" class="mainMenu"></ul>
+            </div>
+        </div>
+        <!-- /panel -->
+       <!-- Page contents -->
+        <form id="frmUpload" method="post">
+        <div data-role="content" data-theme="c" class="ms-norecords-info" role="main" id="noAttachemnt">
+            <ul data-role="listview">
+                <li id="noAttachmentList"></li>
+            </ul>
+        </div>
+        <div data-role="content" data-theme="c" role="main" id="attachmentListDiv">
+            <ul data-role="listview" id="attachmentList">
+
+            </ul>
+        </div>
+        <div class="btn-panel">
+            <a href="#" class="ui-btn custMore buttonColor" id="attachmentMoreButton" onclick="loadMoreWorkOrders(this.form);"
+                data-nextpage='1'></a>
+        </div>
+        <div class="ui-btn-add">
+            <a href="#" data-rel="popup" data-role="button" data-inline="true" data-position-to="window" id="addButton" onclick="openAttachmentPopup()">
+                </a>
+        </div>
+        <div data-role="popup" id="popup_Add" data-overlay-theme="a" data-theme="c" class="custAttachment" data-history='false'>
+            <div data-role="header" class="ms-inner-header" data-history='false'>
+                <h4 id="addAttachmentHeader"></h4>
+                <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right" data-corners="false" data-wrapperels="span" data-theme="c" title="Close">Close</a>
+            </div>
+            <div data-theme="c" data-content-theme="d" data-corners="false">
+                <div data-role="content" class="editor-wrapper">
+                    <div class="editor-container">
+                        <form>
+                        <div class="ui-grid-a">
+                            <div id="selectedImageDiv">
+                                 <img style="width:60px; height:60px;" id="smallImage" src="" />
+                            </div>
+                            <div class="ui-block-a custm-camera-img">
+                                <img style="width: 50px; height: 50px;" onclick="captureWorkOrderAttachmentPhoto();" src="css/images/camera.png" />
+                            </div>
+                            <div class="ui-block-b custm-camera-img">
+                                <img style="width: 50px; height: 50px;" onclick="getWorkOrderPhotoAttachment();" src="css/images/gallery.png"" />
+                            </div>
+                             <label for="textarea" id="descriptionLabel"></label>
+                            <textarea rows="5" cols="26" data-role="none" maxlength="400" name="textarea" id="attachmentDescriptionTextarea" onkeyup="textareaLimitCR(400)" onkeydown="textareaLimitCR(400)"></textarea>
+                            <label id="attachmentErrorMessageLabel" class="custErrorMessage"></label>
+                            <div>
+                                <a href="#" class="ui-btn buttonColor" data-role="button" data-inline="true" data-position-to="window" onclick = "addAttachment(this.form)" id="saveButton"></a>
+                            </div>
+                        </div>
+                       </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div data-role="popup" id="imagePopup" data-dismissible="false" data-overlay-theme="a"
+            data-position-to="window" data-history='false'>
+            <a href="#" data-rel="back" data-role="button" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-btn-icon-notext ui-icon-delete" style="background-color:#85B3EA;border-color:#85B3EA;"></a>
+            <img src="" id="attachmentImage" width="100%!important" />
+        </div>
+        <input type="hidden" id="fileObjectInBase64" name="fileObjectInBase64" value="" />
+        <input type="hidden" id="DatabaseID" name="databaseID" value="" />
+        <input type="hidden" id="seq" name="seq" value="" />
+        <input type="hidden" id="workOrderNumber" name="workOrderNumber" value="" />
+        <input type="hidden" id="fileName" name="fileName" value="" />
+        <input type="hidden" id="description" name="description" value="" />
+        <input type="hidden" id="databaseName" name="databaseName" value="" />
+        <input type="hidden" id="language" name="language" value="English" />
+        <input type="hidden" id="employeeNumber" name="employeeNumber" value="" />
+        <!-- /Page contents -->
+        </form>
+    </div>
+    <!-- /page -->
+</body>
+</html>

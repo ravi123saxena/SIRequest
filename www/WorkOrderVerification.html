@@ -1,0 +1,112 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <title>mainStream - Work Order Verification</title>
+    
+</head>
+<body>
+    <div data-role="page" id="workOrderVerification" class="ce-inventory content-section">
+       <script>
+           $(document).one('pagebeforecreate', "#workOrderVerification", function () {
+
+           });
+           $(document).one('pageshow', "#workOrderVerification", function () {
+               //Hide Logout button for SSO user
+               if (getLocal("SSOUser") === "true") {
+                   $("#logoutButton").hide();
+               }
+
+               // Used to configure back button in different platforms.
+               configureBackButton();
+
+               if (navigator.onLine) {
+                   loadWorkOrderDetails();
+                   $("#headerWoVerification").empty();
+                   $("#headerWoVerification").append('#' + getLocal("SelectedWorkOrder"));
+               } else {
+                   setTimeout(function () {
+                       showErrorPopUp(true, noNetworkTranslation);
+                   }, 1000);
+               }
+           });
+          
+       </script>
+
+        <div data-role="header" class="ms-inner-header" data-position="fixed">
+            <!--<a href="#" class="ui-btn-icon-notext back" data-corners="false" data-shadow="false" onclick="window.location = 'details.html';">Back</a>-->
+             <a href="#menu" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-menuBar"
+                data-corners="false" id="menuBar">Menu</a>
+            <a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-icon-back-new" data-corners="false" 
+            data-shadow="false" data-rel="back" id="backButton">Back</a>
+            <a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-barcode"
+                   data-corners="false" data-shadow="false" id="scanButton" onclick="scanBarcode();"></a>
+            <h1 id="headerWoVerification"></h1>
+            <!--<a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-icon-help" data-corners="false" onclick="navigateToHelp();">Help</a>-->
+            <a href="#" id="logoutButton" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-icon-logout" data-corners="false" onclick="logOut();">Logout</a>
+           <!--
+             <a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-btn-icon-notext ui-icon-help"
+                data-corners="false" onclick="window.location = 'help.html';"></a><a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-btn-icon-notext ui-icon-logout"
+                    data-corners="false" onclick="logOut();"></a>-->
+        </div>
+        <!--  <a href="#" class="ui-btn-right ui-btn-icon-notext ui-icon-menu" data-corners="false">Menu</a> </div>-->
+        <!-- /header -->
+        <!-- /navbar -->
+        <div data-role="collapsible-set" data-theme="c" data-content-theme="d" data-corners="false" class="ms-accord-details ms-grid-content">
+            <div data-role="collapsible">
+                <h4>Location Details</h4>
+                <table width="100%" id="locDetails" class="custom-table" border="0" cellpadding="0" cellspacing="0">               
+                </table>
+            </div>
+            <div data-role="collapsible">
+                <h4>Problem Description</h4>
+                <table width="100%" id="probDesc" class="custom-table" border="0" cellpadding="0" cellspacing="0">
+ 
+                </table>
+            </div>
+            <div data-role="collapsible">
+                <h4>Completion Description</h4>
+                <table width="100%" id="compDesc" class="custom-table" border="0" cellpadding="0" cellspacing="0">
+                 
+                </table>
+            </div>
+            <div data-role="collapsible">
+                <h4>Financial</h4>
+                <table width="100%" id="financeDesc" class="custom-table" border="0" cellpadding="0" cellspacing="0">
+                 
+                </table>
+            </div>
+        </div>
+        <div data-role="content" class="editor-wrapper">
+            <div class="editor-container">
+                <form>
+                <label for="select-native-1">
+                    Work verified:</label>
+                <select id="workVerifiedDropdown">
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+                <label for="select-native-2">
+                    Is the work satisfied?</label>
+                <select id="workSatisfiedDropdown" class="ui-btn-left">
+                    <option value="select">-Select-</option>
+                    <option value="1">Good</option>
+                    <option value="2">Excellent</option>
+                    <option value="3">Fair</option>
+                    <option value="4">Poor</option>
+                </select>
+                </form>
+            </div>
+        </div>
+        
+        <div class="btn-panel">
+            <a href="#" data-role="button" data-inline="true" onclick="woVerificationSave()">Save</a>
+            <a href="#" data-role="button" data-inline="true" data-theme="b">Reset</a>
+        </div>
+        
+		
+    </div>
+    <!-- /page -->
+</body>
+</html>

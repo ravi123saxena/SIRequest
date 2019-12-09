@@ -1,0 +1,227 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">   
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <title>mainStream - Feedback Information</title>
+</head>
+<body>
+    <!-- Feedback Information page -->
+    <div data-role="page" class="ms-inventory content-section" id="feedbackInfoPage">
+        <!-- jQueryMobile Events -->
+        <script type="text/javascript">
+            // Page before create event for feedback information page
+            $(document).one('pagebeforecreate', "#feedbackInfoPage", function () {
+                if (navigator.onLine) {
+                    getTranslations("ProvideFeedback");
+                } else {
+                    setTimeout(function () {
+                        hideImage();
+                        showErrorPopUp(true, noNetworkTranslation);
+                    }, 1000);
+                }
+            });
+            // Page show event for feedback information page
+            $(document).one('pageshow', "#feedbackInfoPage", function () {
+                //Hide Logout button for SSO user
+                if (getLocal("SSOUser") === "true") {
+                    $("#logoutButton").hide();
+                }
+
+                // Used to configure back button in different platforms.
+                configureBackButton();
+                if (navigator.onLine) {
+                    control();
+                    feedbackInfo();
+
+                    $("#feedbackComments").html('');
+                    $("#feedbackComments").text("By: " + decryptStr(getLocal("Username")) + ": ");
+
+                    //Translation section
+                    //setTimeout(function () {
+                    $("#feedbackTitle").text(getTranslatedValue("PageTitle"));
+                    $("#contactInfoLabel").text(getTranslatedValue("ContactInformationLabel"));
+                    $("#contactMeLabel").text(getTranslatedValue("PleasecontactmeCheckBox"));
+                    $("#RatingInformationLabel").text(getTranslatedValue("RatingInformationLabel"));
+                    $("#CommentsLabel").text(getTranslatedValue("CommentsLabel"));
+                    $("#feedbackSave").text(getTranslatedValue("SaveButton"));
+                    $("#ResetButton").text(getTranslatedValue("ResetButton"));
+                    var pageID = $.mobile.activePage.attr('id');
+                    appName == 'iCRS' ? $("#" + pageID + " #appHeader").text(appHeaderForiOS) : $("#" + pageID + " #appHeader").text(appHeaderForAndroid);
+                    setTimeout(function () {
+                        $(".ui-checkbox").show();
+                    }, 300);
+                    //}, 500);
+                }
+                else {
+                    setTimeout(function () {
+                        hideImage();
+                        showErrorPopUp(true, noNetworkTranslation);
+                    }, 1000);
+                }
+
+            });
+
+            $("#feedbackSave").on("click", function () {
+
+                if (navigator.onLine) {
+
+                    if ($("#callerName").val() === null || $("#callerName").val() == '') {
+                        showErrorPopUp(true, getTranslatedValue("NameTextBoxRequiredFieldValidator"));
+                        setTimeout(function () {
+                            $("#callerName").focus();
+                        }, 1000);
+                        return false;
+                    }
+                    var securityIdCaller = securityError($("#callerName"));
+                    setLocal("secStrName", securityIdCaller);
+                    if (securityIdCaller == "") {
+                        return false;
+                    }
+
+
+                    //                if (securityIdCaller === false) {
+                    //                    return false;
+                    //                } else {
+                    //                    setLocal("secStrName", getLocal("secStr"));
+                    //                }
+                    if ($("#phoneNumber").val() === null || $("#phoneNumber").val() == '') {
+                        showErrorPopUp(true, getTranslatedValue("PhoneNumberRequiredFieldValidator"));
+                        $("#phoneNumber").focus();
+                        return false;
+                    }
+
+
+                    if (decryptStr(getLocal("PhoneNumberFormat")) != null) {
+                        debugger;
+                        if (!IsStringNullOrEmpty($("#phoneNumber").val())) {
+                            var phoneNumberText = securityError($("#phoneNumber"));
+                            if (phoneNumberText != "") {
+                                if (!phoneNumberText.match(decryptStr(getLocal("PhoneNumberFormat")))) {
+                                    $("#phoneNumber").val("");
+                                    $("#phoneNumber").focus();
+                                    showErrorPopUp(true, getTranslatedValue("PhoneNumberRegularExpressionValidator"));
+                                    return false;
+                                }
+                            }
+                            else {
+                                $("#phoneNumber").val("");
+                                $("#phoneNumber").focus();
+                                showErrorPopUp(true, "Please Enter Valid Information");
+                                return false;
+                            }
+                        }
+                    }
+
+                    //                    if (checkInternationalPhone($("#phoneNumber").val()) == false) {
+                    //                        showErrorPopUp(true, "Please Enter a Valid Phone Number")
+                    //                        $("#phoneNumber").val("");
+                    //                        $("#phoneNumber").focus();
+                    //                        return false;
+                    //                    }
+                    var securityIdPhone = securityError($("#phoneNumber"));
+                    setLocal("secStrPhone", securityIdPhone);
+                    if (securityIdPhone == "") {
+                        return false;
+                    }
+
+                    var securityIdComments = securityError($("#feedbackComments"));
+                    setLocal("secStrCmt", securityIdComments);
+                    if (securityIdComments == "") {
+                        return false;
+                    }
+
+                    feedbackDataSave();
+                } else {
+                    setTimeout(function () {
+                        hideImage();
+                        showErrorPopUp(true, noNetworkTranslation);
+                    }, 1000);
+                }
+            });
+            $('#ResetButton').on('click', function () {
+                $("#feedbackForm").trigger("reset");
+                $("#AddCommentCharLimitNos").text("1000");
+            });
+  
+        </script>
+        <!-- header section -->
+        <div data-role="header" class="ms-inner-header" data-position="fixed">
+            <a href="#menu" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-menuBar"
+                data-corners="false" id="menuBar">Menu</a>
+            <a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-back-new"
+                data-corners="false" data-shadow="false" data-rel="back" id="backButton">Back</a>
+            <a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-barcode"
+                   data-corners="false" data-shadow="false" id="scanButton" onclick="scanBarcode();"></a>
+            <h1 id="appHeader">
+            </h1>
+            <!--<a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-icon-help"
+                data-corners="false" onclick="navigateToHelp();">Help</a>--> 
+                <a href="#" id="logoutButton" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-icon-logout"
+                    data-corners="false" onclick="logOut();">Logout</a>
+        </div>
+        <!-- /header -->
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#" class="ui-btn-active screenHeader" id="feedbackTitle"></a></li>
+            </ul>
+        </div>
+        <!-- panel Section -->
+        <div data-role="panel" id="menu" data-theme="b" data-display="push">
+            <div class="ui-panel-inner">
+                <!-- This UL is the menu, where the items will be added -->
+                <!-- Make sure you don't add any <li> or any other content inside it! -->
+                <ul data-role="listview" class="mainMenu"></ul>
+            </div>
+        </div>
+        <!-- /panel -->
+        <!-- Feedback Information section -->
+        <form id="feedbackForm">
+        <div class="ui-corner-all custom-corners">
+            <div class="ui-bar ui-bar-a">
+                <h3 id="contactInfoLabel">
+                </h3>
+            </div>
+            <div class="ui-body ui-body-a">
+                <div class="ms-accord-details ms-grid-content">
+                    <table width="100%" class="custom-table" id="contactInfoTable" border="0" cellpadding="0"
+                        cellspacing="0">
+                    </table>
+                </div>
+                <label id="contactMeLabel">
+                    <input type="checkbox" id="contactMe" />
+                </label>   
+            </div>
+        </div>
+        <!-- /Feedback Information -->
+        <!-- Rating Information section -->
+        <div class="ui-corner-all custom-corners">
+            <div class="ui-bar ui-bar-a">
+                <h3 id="RatingInformationLabel">
+                </h3>
+            </div>
+            <div class="ui-body ui-body-a">
+                <div class="ms-accord-details ms-grid-content">
+                    <div id="ratingInfoDetails">
+                    </div>
+                    <span for="textarea" id="CommentsLabel">
+                            </span>[<span id="AddCommentCharLimitNos" style="font-weight: bold;">1000</span> <span>Available characters]</span>                           
+                            <input type="hidden" name="AddCommentHiddenField" id="AddCommentHiddenField" value="400" />                       
+                            <br /><span id="maxnumberError" style="color:Red;margin-left:10px;"></span>
+                            <!--<textarea rows="5" cols="15" data-role="none" name="feedbackComments" id="feedbackComments" maxlength="1000" onkeydown="javascript:return maxAvailableLimitFeedback('feedbackComments','1','Cannot enter more than 1000 characters','AddCommentCharLimitNos',1000,'Available characters')" onkeyup="javascript:return maxAvailableLimitFeedback('feedbackComments','2','Cannot enter more than 1000 characters','AddCommentCharLimitNos',1000,'Available characters')"  onpaste="javascript:return maxAvailableLimitFeedback('feedbackComments','3','Cannot enter more than 1000 characters','AddCommentCharLimitNos',1000,'Available characters')"></textarea>-->
+                            <textarea rows="5" cols="15" data-role="none" id="feedbackComments" name="feedbackComments" maxlength="1000" onkeyup="textareaLimit(1000)" onkeydown="textareaLimit(1000)"></textarea>
+                </div>
+            </div>
+        </div>
+        <!-- /Rating Information -->
+        <!-- Feedback Save button section -->
+        <div class="btn-panel">
+            <a href="#" id="feedbackSave" class="ui-btn ui-btn-inline"></a><a href="#" class="ui-btn ui-btn-inline"
+                id="ResetButton"></a>
+        </div>
+        </form>
+        <!-- /Feedback save -->
+    </div>
+    <!-- /page -->
+</body>
+</html>

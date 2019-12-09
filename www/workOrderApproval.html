@@ -1,0 +1,291 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <title>Work Order Approval</title>
+</head>
+<body>
+    <!-- Work order approval page -->
+    <div data-role="page" id="workOrderApprovalPage" class="ce-inventory content-section">
+        <!-- jQueryMobile Events -->
+        <script type="text/javascript">
+            // Page before create event for Work order approval page
+            $(document).one('pagebeforecreate', "#workOrderApprovalPage", function () {
+                if (navigator.onLine) {
+                    loadingImage();
+                    getTranslations("workOrderApprovalPage");
+                    getSiteLabels("Ref_1");
+                    getSiteLabels("Ref_2");
+                } else {
+                    setTimeout(function () {
+                        hideImage();
+                        showErrorPopUp(true, noNetworkTranslation);
+                    }, 1000);
+                }
+
+            });
+            // Page show event for Work order approval page
+            $(document).one('pageshow', "#workOrderApprovalPage", function () {
+                //Hide Logout button for SSO user
+                if (getLocal("SSOUser") === "true") {
+                    $("#logoutButton").hide();
+                }
+
+                // Used to configure back button in different platforms.
+                configureBackButton();
+
+                if (navigator.onLine) {
+                    $("#approvalDiv").hide();
+                    $("#approvalButtonDiv").hide();
+                    $("#workVerifiedDiv").hide();
+                    $("#completionDescDiv").hide();
+                    $("#workVerifiedButtonDiv").hide();
+                    $("#workVerificationDiv").hide();
+                    $("#invoiceSummaryDiv").hide();
+                    $("#rejectionReasonDiv").hide();
+                    $("#commentRequiredLabel").hide();
+                    /*********************Translations********************/
+                    //setTimeout(function () {
+                    $("#locationHeader .ui-collapsible-heading-toggle").text(getTranslatedValue("locationHeader"));
+                    $("#problemDescHeader .ui-collapsible-heading-toggle").text(getTranslatedValue("problemDescHeader"));
+                    $("#financialHeader .ui-collapsible-heading-toggle").text(getTranslatedValue("financialHeader"));
+                    $("#approvalHistoryHeader .ui-collapsible-heading-toggle").text(getTranslatedValue("approvalHistoryHeader"));
+                    $("#completionDescHeader .ui-collapsible-heading-toggle").text(getTranslatedValue("completionDescHeader"));
+                    $("#invoiceSummaryHeader .ui-collapsible-heading-toggle").text(getTranslatedValue("invoiceSummaryHeader"));
+                    $("#workVerificationHeader .ui-collapsible-heading-toggle").text(getTranslatedValue("workVerificationHeader"));
+                    $("#rejectButton").text(getTranslatedValue("rejectButton"));
+                    $("#approveButton").text(getTranslatedValue("approveButton"));
+                    $("#closeButton").text(getTranslatedValue("closeButton"));
+                    $("#commentPopupHeader").html(getTranslatedValue("commentPopupHeader"));
+                    $("#commentLabel").html("<span style='color:red;'>*</span> " + getTranslatedValue("commentLabel"));
+                    $("#confirmButton").text(getTranslatedValue("confirmButton"));
+                    $("#cancelButton").text(getTranslatedValue("cancelButton"));
+                    $("#workVerifiedLabel").text(getTranslatedValue("workVerifiedLabel"));
+                    $("#optionYes").text(getTranslatedValue("optionYes"));
+                    $("#optionNo").text(getTranslatedValue("optionNo"));
+                    $("#workSatisfiedLabel").text(getTranslatedValue("workSatisfiedLabel"));
+                    $("#saveButton").text(getTranslatedValue("saveButton"));
+                    $("#resetButton").text(getTranslatedValue("resetButton"));
+                    $("#selectOption").text(getTranslatedValue("selectOption"));
+                    $("#rejectionReasonLabel").text(getTranslatedValue("rejectionReasonLabel"));
+                    $("#verificationCommentLabel").text(getTranslatedValue("commentLabel"));
+                    $("#closeButtonVer").text(getTranslatedValue("closeButton"));
+                    $("#workVerifiedDropdown").selectmenu("refresh");
+                    $("#workSatisfiedDropdown").selectmenu("refresh");
+                    var pageID = $.mobile.activePage.attr('id');
+                    appName == 'iCRS' ? $("#" + pageID + " #appHeader").text(appHeaderForiOS) : $("#" + pageID + " #appHeader").text(appHeaderForAndroid);
+                    //}, 1000);
+
+                    /*******************Translations End********************/
+
+                    //Load work order details
+                    loadApprovalDetails(getLocal("approvalOption"));
+                    $("#workOrderApprovalHeader").empty();
+                    $("#workOrderApprovalHeader").append(getLocal("approvalAction") + " - #" + getLocal("SelectedWorkOrder"));
+                } else {
+                    setTimeout(function () {
+                        hideImage();
+                        showErrorPopUp(true, noNetworkTranslation);
+                    }, 1000);
+                }
+
+            });
+            //On click of reject button
+            $("#rejectButton").on("click", function () {
+                if (navigator.onLine) {
+                    $("#commentRequiredLabel").hide();
+                    $("#rejectCommentTextArea").val('');
+                    if (getLocal("approvalOption") == '4') {
+                        $("#rejectionReasonDiv").hide();
+                        $("#commentPopup").popup("open");
+                    }
+                    else if (getLocal("approvalOption") == '2') {
+                        $("#commentPopupHeader").html(getTranslatedValue("rejctionReasonPopupHeader"));
+                        $("#commentPopup").popup("open");
+                        $("#rejectionReasonDiv").show();
+                    }
+                    else {
+                        rejectConfirm();
+                    }
+                } else {
+                    setTimeout(function () {
+                        hideImage();
+                        showErrorPopUp(true, noNetworkTranslation);
+                    }, 1000);
+                }
+            });
+            $("#cancelButton").on("click", function () {
+                $("#rejectForm").trigger("reset");
+                $("#commentPopup").popup("close");
+                $("#AddCommentCharLimitNos").text("400");
+                $("#maxnumberError").html('');
+            });
+            function limit(element) {
+                var max_chars = 1000;
+
+                if (element.value.length > max_chars) {
+                    element.value = element.value.substr(0, max_chars);
+                }
+            }
+        </script>
+        <!-- Header section -->
+        <div data-role="header" class="ms-inner-header" data-position="fixed">
+            <a href="#menu" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-menuBar"
+                data-corners="false" id="menuBar">Menu</a> <a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-back-new"
+                    data-corners="false" data-shadow="false" data-rel="back" id="backButton">Back</a>
+            <a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-barcode"
+                   data-corners="false" data-shadow="false" id="scanButton" onclick="scanBarcode();"></a>
+            <h1 id="appHeader">
+            </h1>
+            <!--<a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-icon-help"
+                data-corners="false" onclick="navigateToHelp();"></a>-->
+                <a href="#" id="logoutButton" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-icon-logout"
+                    data-corners="false" onclick="logOut();"></a>
+        </div>
+        <!-- /Header section -->
+        <!-- panel Section -->
+        <div data-role="panel" id="menu" data-theme="b" data-display="push">
+            <div class="ui-panel-inner">
+                <!-- This UL is the menu, where the items will be added -->
+                <!-- Make sure you don't add any <li> or any other content inside it! -->
+                <ul data-role="listview" class="mainMenu"></ul>
+            </div>
+        </div>
+        <!-- /panel -->
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#" class="ui-btn-active screenHeader" id="workOrderApprovalHeader"></a></li>
+            </ul>
+        </div>
+        <!-- Page contents -->
+        <div data-role="collapsible-set" data-theme="c" data-content-theme="d" data-corners="false"
+            class="ms-accord-details ms-grid-content">
+            <div data-role="collapsible" data-collapsed="false">
+                <h4 id="locationHeader">
+                </h4>
+                <table width="100%" id="locDetailsTable" class="custom-table" border="0" cellpadding="0"
+                    cellspacing="0">
+                </table>
+            </div>
+            <div data-role="collapsible">
+                <h4 id="problemDescHeader">
+                </h4>
+                <table width="100%" id="probDescTable" class="custom-table" border="0" cellpadding="0"
+                    cellspacing="0">
+                </table>
+            </div>
+            <div data-role="collapsible" id="completionDescDiv">
+                <h4 id="completionDescHeader">
+                </h4>
+                <table width="100%" id="compDescTable" class="custom-table" border="0" cellpadding="0"
+                    cellspacing="0">
+                </table>
+            </div>
+            <div data-role="collapsible" id="workVerificationDiv">
+                <h4 id="workVerificationHeader">
+                </h4>
+                <table width="100%" id="workVerificationTable" class="custom-table" border="0" cellpadding="0"
+                    cellspacing="0">
+                </table>
+            </div>
+            <div data-role="collapsible" id="financialDiv">
+                <h4 id="financialHeader">
+                </h4>
+                <table width="100%" id="financeDescTable" class="custom-table" border="0" cellpadding="0"
+                    cellspacing="0">
+                </table>
+            </div>
+            <div data-role="collapsible" id="invoiceSummaryDiv">
+                <h4 id="invoiceSummaryHeader">
+                </h4>
+                <table width="100%" id="invoiceSummaryTable" class="custom-table" border="0" cellpadding="0"
+                    cellspacing="0">
+                </table>
+            </div>
+            <div data-role="collapsible" id="approvalDiv">
+                <h4 id="approvalHistoryHeader">
+                </h4>
+                <ul data-role="listview" id="approvalHistoryList">
+                </ul>
+            </div>
+        </div>
+        <div class="btn-panel" id="approvalButtonDiv">
+            <a href="#" data-rel="popup" data-role="button" data-inline="true" data-dismissible="false"
+                data-position-to="window" id="rejectButton"></a><a href="#" data-role="button" data-inline="true"
+                    data-theme="b" onclick="approveWorkOrders()" id="approveButton"></a><a href="#" data-role="button"
+                        data-inline="true" data-rel="back" id="closeButton"></a>
+        </div>
+        <div data-role="popup" id="commentPopup" data-overlay-theme="a" data-dismissible="false"
+            data-theme="c">
+            <div data-role="header" class="ms-inner-header">
+                <h2 id="commentPopupHeader">
+                </h2>
+                <a href="#" data-rel="back" data-theme="c" data-role="button" data-icon="delete"
+                    data-iconpos="notext" data-shadow="false" data-iconshadow="false" class="ui-btn-right"
+                    data-corners="false" data-wrapperels="span" title="Close"></a>
+            </div>
+            <div data-theme="c" data-content-theme="d" data-corners="false">
+                <div data-role="content" class="editor-wrapper">
+                    <div class="editor-container">
+                        <form id="rejectForm">
+                        <div class="ui-grid-a">
+                            <div id="rejectionReasonDiv">
+                                <label id="rejectionReasonLabel">
+                                </label>
+                                <select id="rejectionReasonDropDown" class="ui-btn-left">
+                                </select>
+                            </div>
+                            <span for="textarea" id="commentLabel"></span><span>[</span><span id="AddCommentCharLimitNos"
+                                style="font-weight: bold;">400</span><span> Available characters]</span>
+                            <input type="hidden" name="AddCommentHiddenField" id="AddCommentHiddenField" value="400" />
+                            <br />
+                            <span id="maxnumberError" style="color: Red; margin-left: 10px;"></span>
+                            <textarea rows="5" cols="15" data-role="none" name="rejectCommentTextArea" id="rejectCommentTextArea"
+                                maxlength="400" onkeydown="textareaLimit(400)" onkeyup="textareaLimit(400)"></textarea>
+                            <label id="commentRequiredLabel">
+                            </label>
+                            <div>
+                                <a href="#" id="confirmButton" data-role="button" data-inline="true" data-theme="b"
+                                    onclick="rejectConfirm()"></a><a href="#" id="cancelButton" data-role="button" data-inline="true">
+                                    </a>
+                            </div>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div data-role="content" class="editor-wrapper" id="workVerifiedDiv">
+            <div class="editor-container">
+                <form>
+                <label id="workVerifiedLabel">
+                    :</label>
+                <select id="workVerifiedDropdown">
+                    <option value="Yes" id="optionYes"></option>
+                    <option value="No" id="optionNo" selected></option>
+                </select>
+                <div id="workSatisfiedGradeDiv">
+                    <label id="workSatisfiedLabel">
+                    </label>
+                    <select id="workSatisfiedDropdown">
+                    </select>
+                </div>
+                <label id="verificationCommentLabel">
+                </label>
+                <textarea rows="4" cols="30" data-role="none" id="verificationCommentTextArea" onkeydown="textareaLimitCR(1000)"
+                    onkeyup="textareaLimitCR(1000)" maxlength="1000"></textarea>
+                <div class="btn-panel" id="workVerifiedButtonDiv">
+                    <a href="#" data-role="button" data-inline="true" onclick="woVerificationSave()"
+                    id="saveButton"></a><a href="#" data-role="button" data-inline="true" data-rel="back"
+                        id="closeButtonVer"></a>
+                </div>
+                    <!--<textarea rows="5" cols="26" data-role="none" maxlength="400" name="textarea" id="attachmentDescriptionTextarea" onkeyup="textareaLimitCR(400)" onkeydown="textareaLimitCR(400)"></textarea>-->
+                </form>
+            </div>            
+        </div>
+        <!-- /Page contents -->
+    </div>
+    <!-- /Work order approval page -->
+</body>
+</html>

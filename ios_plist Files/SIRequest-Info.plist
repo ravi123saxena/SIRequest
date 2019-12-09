@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleDisplayName</key>
+	<string>SIRequest_UAT</string>
+	<key>CFBundleExecutable</key>
+	<string>${EXECUTABLE_NAME}</string>
+	<key>CFBundleIcons</key>
+	<dict/>
+	<key>CFBundleIcons~ipad</key>
+	<dict/>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>${PRODUCT_NAME}</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0.3</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>2019102101</string>
+	<key>LSApplicationCategoryType</key>
+	<string></string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>Enable SIRequest to access your Gallery to upload photos for inspection purpose.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Enable SIRequest to access your Camera roll to upload photos for inspection purpose and scan the Barcode.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Enable SIRequest to access your Location to raise the service request.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Enable SIRequest to access your Location to raise the service request.</string>
+	<key>NSMainNibFile</key>
+	<string></string>
+	<key>NSMainNibFile~ipad</key>
+	<string></string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Enable SIRequest to access your Microphone to give the service request description by voice.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Enable SIRequest to access your photo library.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Enable SIRequest to access your Speech Recognition to give the service request description by voice.</string>
+	<key>UIRequiresFullScreen</key>
+	<true/>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+</dict>
+</plist>

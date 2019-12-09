@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">    
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    
+</head>
+<body>
+    <!-- Dashboard page -->
+    <div data-role="page" class="ms-inventory content-section" id="dashboardPage">
+        <!-- jQueryMobile Events -->
+        <script type="text/javascript">
+            // Page before create event for quicklinks page
+            $(document).one('pagebeforecreate', "#dashboardPage", function () {
+                if (navigator.onLine) {
+                    var interval = setTimeout(function () {
+                        $("div").addClass('ui-disabled');
+                        $.mobile.loading('show', {
+                            text: 'Loading',
+                            textVisible: true,
+                            theme: 'b',
+                            textonly: false,
+                            html: ""
+                        });
+                        clearInterval(interval);
+                    }, 1);
+                    getTranslations("quickLinksPage");
+                } else {
+                    setTimeout(function () {
+                        hideImage();
+                        showErrorPopUp(true, noNetworkTranslation);
+                    }, 1000);
+                }
+            });
+            // Page show event for dashboard page
+            $(document).one('pageshow', "#dashboardPage", function () {
+                //Hide Logout button for SSO user
+                if (getLocal("SSOUser") === "true") {
+                    $("#logoutButton").hide();
+                }
+
+                setLocal("approvalOption", '');
+                $("#welMsg").html('');
+                ///setTimeout(function () {
+                $("#welMsg").html('<span>' + getTranslatedValue("welcomeBackLabel") + ', ' + decryptStr(getLocal("Username")) + '</span>');
+                var pageID = $.mobile.activePage.attr('id');
+                appName == 'iCRS' ? $("#" + pageID + " #appHeader").text(appHeaderForiOS) : $("#" + pageID + " #appHeader").text(appHeaderForAndroid);
+                //hideImage();
+                //}, 2000);
+                if (navigator.onLine) {
+                    dashboardMenu();
+                }
+                else {
+                    setTimeout(function () {
+                        showErrorPopUp(true, noNetworkTranslation);
+                    }, 1000);
+                }
+
+            });
+           
+        </script>
+        <!-- header section -->
+        <div data-role="header" class="ms-inner-header" data-position="fixed">
+            <a href="#menu" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-menuBar"
+                data-corners="false"></a>
+            <a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-barcode"
+                   data-corners="false" data-shadow="false" id="scanButton" onclick="scanBarcode();"></a>
+            <h1 id="appHeader">
+                </h1>
+            <!--<a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-btn-icon-notext ui-icon-help"
+                data-corners="false" onclick="navigateToHelp();"></a>-->
+                <a href="#" id="logoutButton" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-btn-icon-notext ui-icon-logout"
+                    data-corners="false" onclick="logOut();"></a>
+        </div>
+        <!-- /header -->
+        <!-- panel Section -->
+        <div data-role="panel" id="menu" data-theme="b" data-display="push">
+            <div class="ui-panel-inner">
+                <!-- This UL is the menu, where the items will be added -->
+                <!-- Make sure you don't add any <li> or any other content inside it! -->
+                <ul data-role="listview" class="mainMenu"></ul>           </div>
+        </div>
+        <!-- /panel -->
+        <!-- Navigation Bar -->
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#" class="ui-btn-active screenHeader" id="welMsg"></a></li>
+            </ul>
+        </div>
+        <!-- /navbar -->
+        <!-- Menus -->
+        <div class="menupage">
+            <ul class="gridLayout"></ul>
+        </div>
+        <!-- /Menus -->
+    </div>
+    <!-- /page -->
+</body>
+</html>

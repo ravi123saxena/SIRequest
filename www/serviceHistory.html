@@ -1,0 +1,327 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <title>mainStream - Service History</title>
+</head>
+<body>
+    <!-- Serive History page -->
+    <div data-role="page" class="ms-inventory content-section" id="serviceHistory">
+        <!-- jQueryMobile Events -->
+        <script type="text/javascript">
+            // Page before create event for service history page
+            $(document).one('pagebeforecreate', "#serviceHistory", function () {
+                if (navigator.onLine) {
+                    var interval = setTimeout(function () {
+                        $("div").addClass('ui-disabled');
+                        $.mobile.loading('show', {
+                            text: 'Loading',
+                            textVisible: true,
+                            theme: 'b',
+                            textonly: false,
+                            html: ""
+                        });
+                        clearInterval(interval);
+                    }, 1);
+                    getTranslations("ServiceRequestHistory");
+                    $(".ms-noservicehistory-info").hide();
+                    $("#moreServiceHistoryButton").hide();
+                    //$("#datefrom").attr("data-options", '{"mode":"calbox", "useLang":"en-US"}');
+                    jQuery.extend(jQuery.mobile.datebox.prototype.options, {
+                        useLang: getLocal("Language")
+                    });
+                    //$("#datefrom").datebox("refresh");
+
+                } else {
+                    setTimeout(function () {
+                        hideImage();
+                        showErrorPopUp(true, noNetworkTranslation);
+                    }, 1000);
+                }
+
+            });
+            // Page show event for service history screen
+            $(document).one('pageshow', "#serviceHistory", function () {
+                //Hide Logout button for SSO user
+                if (getLocal("SSOUser") === "true") {
+                    $("#logoutButton").hide();
+                }
+
+                // Used to configure back button in different platforms.
+                configureBackButton();
+
+                if (navigator.onLine) {
+                    serviceHistory();
+                    setTimeout(function () {
+                        $("#errorPopup").popup();
+                    }, 1000);
+
+                    $("#serviceHistoryTitle").text((decryptStr(getLocal("MSIClientCode")) === "IO" ? getTranslatedValue("PageTitleIO") : getTranslatedValue("PageTitle")));
+                    $("#woNumber").text(getTranslatedValue("WorkOrderLabel"));
+                    $("#dateFromLabel").text(getTranslatedValue("DateFromLabel") + ":");
+                    $("#dateToLabel").text(getTranslatedValue("DateToLabel"));
+                    $("#typeLabel").text(getTranslatedValue("TypeLabel"));
+                    $("#statusLabel").text(getTranslatedValue("StatusLabel") + ":");
+                    $("#customFilterLabel").text(getTranslatedValue("CustomerFilterLabel"));
+                    $("#criteriaLabel").text(getTranslatedValue("CriteriaLabel"));
+                    $("#dateOpenedFromLabel").text(getTranslatedValue("CriteriaFromLabel"));
+                    $("#dateOpenedToLabel").text(getTranslatedValue("CriteriaToLabel"));
+                    $("#rangeFromLabel").text(getTranslatedValue("CriteriaFromLabel"));
+                    $("#rangeToLabel").text(getTranslatedValue("CriteriaToLabel"));
+                    $("#pageRecordsLabel").html("<span style='color:red;'>*</span> " + getTranslatedValue("RecordsPerPageLabel"));
+                    $("#searchHistoryData").text(getTranslatedValue("DisplayHistoryButton"));
+                    $("#noWorkOrders").text(getTranslatedValue("NoWorkOrdersFound"));
+                    $("#moreServiceHistoryButton").text(getTranslatedValue("MoreLabel"));
+                    var pageID = $.mobile.activePage.attr('id');
+                    appName == 'iCRS' ? $("#" + pageID + " #appHeader").text(appHeaderForiOS) : $("#" + pageID + " #appHeader").text(appHeaderForAndroid);
+                    $("#optionSelect").text("--" + getTranslatedValue("Select") + "--");
+                    $("#optionCompleted").text(getTranslatedValue("optionCompleted"));
+                    $("#optionIncomplete").text(getTranslatedValue("optionIncomplete"));
+                    $("#lblContract").text(getTranslatedValue("ContractFilterLabel"));
+
+                   
+                    if (decryptStr(getLocal("ShowType")) === "0") {
+                        $("#typeLabel").hide();
+                        $("#typeDrop").parent().hide()
+                    }
+                    //                    if (decryptStr(getLocal("MSIClientCode")) === "IO") {
+                    //                        $("#typeLabel").hide();
+                    //                        $("#typeDrop").parent().hide()
+                    //                    }
+                    // }, 3000);
+                } else {
+                    setTimeout(function () {
+                        showErrorPopUp(true, noNetworkTranslation);
+                    }, 1000);
+                }
+
+            });
+            function CustomSortChange(obj) {
+
+                switch (Number($(obj).val())) {
+                    case -1:
+                        $("#Criteria").hide();
+                        $("#ActualCost").hide();
+                        $("#DateOpened").hide();
+                        break;
+                    case 1:
+                    case 2:
+                    case 3:
+
+                    case 8:
+                    case 7:
+
+                        $("#Criteria").show();
+                        $("#ActualCost").hide();
+                        $("#DateOpened").hide();
+                        break;
+
+                    case 6:
+                    case 5:
+                        $("#ActualCost").show();
+                        $("#DateOpened").hide();
+                        if ($("#actual").val() == '-1' || $("#actual").val() == '6') { $("#Criteria").hide(); } else { $("#Criteria").show(); }
+                        break;
+
+                    case 4:
+                        $("#DateOpened").show();
+                        $("#ActualCost").hide();
+                        $("#Criteria").hide();
+                        dateCriteria();
+                        break;
+                }
+            }
+            function ActualCostChanged(obj) {
+                $("#Criteria").hide();
+                $("#typeRange").hide();
+                switch (Number($(obj).val())) {
+                    case -1:
+                        $("#Criteria").hide();
+                        $("#typeRange").hide();
+                        break;
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                        $("#Criteria").show();
+                        $("#typeRange").hide();
+                        break;
+
+                    case 6:
+                        $("#typeRange").show();
+                        $("#Criteria").hide();
+                        break;
+                }
+
+
+            }
+            function dateCriteria() {
+                $("#nullCheck").on("change", function () {
+                    if (this.checked) {
+                        setLocal("isNullChecked", $('#nullCheck').is(':checked'));
+                        $("#from2").textinput("disable");
+                        $("#to2").textinput("disable");
+                    }
+                    else {
+                        setLocal("isNullChecked", $('#nullCheck').is(':checked'));
+                        $("#from2").textinput("enable");
+                        $("#to2").textinput("enable");
+                        if (getLocal("dateOpenedFrom") !== null) {
+                            $("#from2").val(getLocal("dateOpenedFrom"));
+                        }
+                        if (getLocal("dateOpenedTo") !== null) {
+                            $("#to2").val(getLocal("dateOpenedTo"));
+                        }
+                    }
+                });
+            }
+           
+        </script>
+        <!-- header section -->
+        <div data-role="header" class="ms-inner-header" data-position="fixed">
+            <a href="#menu" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-menuBar"
+                data-corners="false" id="menuBar">Menu</a>
+            <a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-back-new"
+                data-corners="false" data-shadow="false" data-rel="back" id="backButton">Back</a>
+            <a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-barcode"
+                   data-corners="false" data-shadow="false" id="scanButton" onclick="scanBarcode();"></a> 
+            <h1 id="appHeader">
+            </h1>
+            <!--<a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-icon-help"
+                data-corners="false" onclick="navigateToHelp();">Help</a>--> 
+                <a href="#" id="logoutButton" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-icon-logout"
+                    data-corners="false" onclick="logOut();">Logout</a>
+        </div>
+        <!-- /header -->
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#" class="ui-btn-active screenHeader" id="serviceHistoryTitle"></a></li>
+            </ul>
+        </div>
+        <!-- panel Section -->
+        <div data-role="panel" id="menu" data-theme="b" data-display="push">
+            <div class="ui-panel-inner">
+                <!-- This UL is the menu, where the items will be added -->
+                <!-- Make sure you don't add any <li> or any other content inside it! -->
+                <ul data-role="listview" class="mainMenu"></ul>
+            </div>
+        </div>
+        <!-- /panel -->
+        <!-- content section -->
+        <div data-theme="c" data-content-theme="d" data-corners="false">
+            <div data-role="content" class="editor-wrapper">
+                <div class="editor-container">
+                    <form>
+                    <label for="orderno" id="woNumber">
+                    </label>
+                    <input type="text"  name="" id="orderno" value="">
+                    <label for="datefrom" id="dateFromLabel">
+                    </label>
+                    <!--<input type="date" data-role="datebox" data-options='{"mode": "datebox", "useNewStyle":true}' data-inline="true" name="" id="datefrom" value="">-->
+                    <!--<input name="datefrom" id="datefrom" type="text" data-role="datebox"  data-options='{"mode":"calbox", "useLang":"ja-JP"}' />-->
+                    <input name="datefrom" id="datefrom" type="text" data-role="datebox" data-options='{"mode":"calbox"}' />
+                    <label for="dateto" id="dateToLabel">
+                    </label>
+                    <!--<input type="date" data-role="datebox" data-options='{"mode": "datebox", "useNewStyle":true}' data-inline="true" name="" id="dateto" value="">-->
+                    <input name="dateto" id="dateto" type="text" data-role="datebox" data-options='{"mode":"calbox"}' />
+                    <label for="type" id="typeLabel">
+                    </label>
+                    <select id="typeDrop">
+                    </select>
+                    <label for="status" id="statusLabel">
+                    </label>
+                    <select id="historyStatus">
+                        <option value="Select" id="optionSelect"></option>
+                        <option value="Completed" id="optionCompleted"></option>
+                        <option value="InCompleted" id="optionIncomplete"></option>
+                    </select>
+                    <label for="records" id="pageRecordsLabel">
+                    </label>
+                    <input type="text" name="" id="recordsPerPage" value="">
+                    <label for="customfilter" id="customFilterLabel">
+                    </label>
+                    <select id="customfilter" name="SSortDDL" onchange="CustomSortChange(this);">
+                    </select>
+                    <div id="ActualCost" style="display: none">
+                        <select id="actual" name="SSortDDL" onchange="ActualCostChanged(this);">
+                            <option value="-1" selected>Select</option>
+                            <option value="1">&lt</option>
+                            <option value="2">&gt</option>
+                            <option value="3">&lt=</option>
+                            <option value="4">&gt=</option>
+                            <option value="5">=</option>
+                            <option value="6">Range</option>
+                        </select>
+                        <div id="typeRange" style="display: none">
+                            <label for="from1" id="rangeFromLabel">
+                            </label>
+                            <input type="text" id="rangeFrom" name="SWONumTextBox" value="" />
+                            <label for="to1" id="rangeToLabel">
+                                To:
+                            </label>
+                            <input type="text" id="rangeTo" name="SWONumTextBox" value="" />
+                        </div>
+                    </div>
+                    <div id="DateOpened" style="display: none">
+                        <label for="from2" id="dateOpenedFromLabel">
+                        </label>
+                        <input id="from2" type="text" data-role="datebox" data-options='{"mode":"calbox"}' name="SWONumTextBox" />
+                        <label for="to2" id="dateOpenedToLabel">
+                        </label>
+                        <input id="to2" type="text" data-role="datebox" data-options='{"mode":"calbox"}' name="SWONumTextBox" />
+                        
+                        <label class="checkbox" id="nullLabel">
+                            <input type="checkbox" value="" id="nullCheck">Null
+                        </label>
+                    
+                    </div>
+                    <div id="Criteria" style="display: none">
+                        <label for="criteria" id="criteriaLabel">
+                        </label>
+                        <input type="text" id="criteria" name="SWONumTextBox" />
+                    </div>
+                    
+                      <label id="lblContract" for="ContractDropDown" > </label>
+                        <select id="ContractDropDown" >
+                            <option value="-1">--Select--</option>
+                        </select>
+
+                   
+                    </form>
+                </div>
+            </div>
+        </div>
+       
+        <!-- /content -->
+        <!-- search button section -->
+        <div class="btn-panel">
+            <a href="#" data-role="button" id="searchHistoryData" data-inline="true"></a>
+        </div>
+         <br />
+        <!-- /search button -->
+        <!-- service history listview section -->
+        <div data-role="collapsible-set" data-theme="c" data-content-theme="d" data-corners="false"
+            class="ms-accord-details">
+            <ul class="serviceHistoryList" data-role="listview">
+            </ul>
+        </div>
+        <!-- /service history listview -->
+        <!-- more section -->
+        <div class="editor-wrapper">
+            <a href="#" class="ui-btn custMore buttonColor" id="moreServiceHistoryButton" onclick="loadMoreServiceHistory(this);"
+                data-nextpage='1'></a>
+        </div>
+        <!-- /more -->
+        <!-- no work order section -->
+        <div data-theme="c" class="ms-noservicehistory-info">
+            <ul data-role="listview">
+                <li id="noWorkOrders"></li>
+            </ul>
+        </div>
+        <!-- /no work order -->
+    </div>
+    <!-- /page -->
+</body>
+</html>

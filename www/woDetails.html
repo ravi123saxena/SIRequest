@@ -1,0 +1,210 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <title>mainStream - Work Order Details</title>
+</head>
+<body>
+    <!-- Work Order Details page -->
+    <div data-role="page" class="ce-inventory content-section" id="woDetailPage">
+        <!-- jQueryMobile Events -->
+        <script>
+            // Page before create event for work order detail page
+            $(document).one('pagebeforecreate', "#woDetailPage", function () {
+                if (navigator.onLine) {
+                    loadingImage();
+                    getTranslations("ViewWorkOrderDetail");
+                } else {
+                    setTimeout(function () {
+                        hideImage();
+                        showErrorPopUp(true, noNetworkTranslation);
+                    }, 1000);
+                }
+
+            });
+            // Page show event for work order detail page
+            $(document).one('pageshow', "#woDetailPage", function () {
+                //Hide Logout button for SSO user
+                if (getLocal("SSOUser") === "true") {
+                    $("#logoutButton").hide();
+                }
+
+                // Used to configure back button in different platforms.
+                configureBackButton();
+
+                if (navigator.onLine) {
+                    $(".collapsible a").addClass("collapsible");
+
+                    if (decryptStr(getLocal("ViewOrderCallerFilter")) != null) {
+                        //setTimeout(function () {
+                        intFilter = decryptStr(getLocal("ViewOrderCallerFilter"));
+                        //}, 1000);
+                        workOrderDetail();
+                        if (decryptStr(getLocal("AllowFeedbackToCompletedWOsOnly")) != null) {
+                            if (decryptStr(getLocal("AllowFeedbackToCompletedWOsOnly")).toLowerCase() == "true") {
+                                if (getLocal("WOStatus") != null) {
+                                    if (!getLocal("WOStatus").startsWith("C")) {
+                                        $("#WOFeedBackLink").addClass('ui-disabled');
+                                    }
+                                    else if (getLocal("WOStatus").startsWith("CAN") || getLocal("WOStatus").startsWith("CMP")) {
+                                        $("#WOFeedBackLink").addClass('ui-disabled');
+                                    }
+                                    else {
+                                        $("#WOFeedBackLink").removeClass('ui-disabled');
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        setTimeout(function () {
+                            showErrorPopUp(true, getTranslatedValue("WorkOrderExistLabel"));
+                        }, 1000);
+                    }
+
+                    if (decryptStr(getLocal("AttachEnable")) != null) {
+                        if (decryptStr(getLocal("AttachEnable")).toLowerCase() == "true") {
+                            //setTimeout(function () {
+                            $("#AttachmentId").show();
+                            $("#AttachmentCollapsible").show();
+                            //}, 1000);
+                        }
+                        else {
+                            //setTimeout(function () {
+                            $("#AttachmentId").hide();
+                            $("#AttachmentCollapsible").hide();
+                            //}, 1000);
+                        }
+                    }
+
+                    if (decryptStr(getLocal("ShowLogHist")) != null) {
+                        if (decryptStr(getLocal("ShowLogHist")).toLowerCase() == "true") {
+                            //setTimeout(function () {
+                            $("#WOLogHistory").show();
+                            //}, 1000);
+                        }
+                        else {
+                            //setTimeout(function () {
+                            $("#WOLogHistory").hide();
+                            //}, 1000);
+                        }
+                    }
+                } else {
+                    setTimeout(function () {
+                        showErrorPopUp(true, noNetworkTranslation);
+                    }, 1000);
+                }
+            });
+        </script>
+        <!-- header section -->
+        <div data-role="header" class="ms-inner-header" data-position="fixed">
+            <a href="#menu" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-menuBar"
+                data-corners="false" id="menuBar">Menu</a> <a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-back-new"
+                data-corners="false" data-rel="back" id="backButton">Back</a>
+            <a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-barcode"
+                   data-corners="false" data-shadow="false" id="scanButton" onclick="scanBarcode();"></a>
+            <h1 id="appHeader">
+            </h1>
+            <!--<a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-icon-help"
+                data-corners="false" onclick="navigateToHelp();">Help</a>--> 
+                <a href="#" id="logoutButton" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-icon-logout"
+                    data-corners="false" onclick="logOut();">Logout</a>
+        </div>
+        <!-- /header -->
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#" class="ui-btn-active screenHeader" id="woID"></a></li>
+            </ul>
+        </div>
+         <!-- panel Section -->
+        <div data-role="panel" id="menu" data-theme="b" data-display="push">
+            <div class="ui-panel-inner">
+                <!-- This UL is the menu, where the items will be added -->
+                <!-- Make sure you don't add any <li> or any other content inside it! -->
+                <ul data-role="listview" class="mainMenu"></ul>
+            </div>
+        </div>
+        <!-- /panel -->
+        <!-- content section -->
+        <div data-role="collapsible-set" data-theme="c" data-content-theme="d" data-corners="false"
+            class="ms-accord-details ms-grid-content">
+            <div data-role="collapsible" data-collapsed="false" class="collapsible">
+                <h4 id="WorkOrderLocationLabel">
+                    </h4>
+                <table width="100%" id="locationDetails" class="custom-table" border="0" cellpadding="0"
+                    cellspacing="0">
+                </table>
+            </div>
+            <div data-role="collapsible" class="collapsible">
+                <h4 id="ImportantDatesLabel">
+                    </h4>
+                <table width="100%" id="importantDates" class="custom-table" border="0" cellpadding="0"
+                    cellspacing="0">
+                </table>
+            </div>
+            <div data-role="collapsible" class="collapsible">
+                <h4 id="WorkOrderFeedbackLabel">
+                    </h4>
+                <table width="100%" id="woNumber" class="custom-table" border="0" cellpadding="0"
+                    cellspacing="0">
+                </table>
+            </div>
+            <div data-role="collapsible" class="collapsible">
+                <h4 id="ProblemDescriptionLabel">
+                    </h4>
+                <table width="100%" id="probDesc" class="custom-table" border="0" cellpadding="0"
+                    cellspacing="0">
+                </table>
+            </div>
+            <div data-role="collapsible" class="collapsible">
+                <h4 id="CompletionDescriptionLabel">
+                    </h4>
+                <table width="100%" id="complDesc" class="custom-table" border="0" cellpadding="0"
+                    cellspacing="0">
+                </table>
+            </div>
+            <div data-role="collapsible" class="collapsible">
+                <h4 id="GeneralInformationLabel">
+                    </h4>
+                <table width="100%" id="genInfo" class="custom-table" border="0" cellpadding="0"
+                    cellspacing="0">
+                </table>
+            </div>
+            <div data-role="collapsible" class="collapsible">
+                <h4 id="AssignmentLabel">
+                    </h4>
+                <table width="100%" id="assignmentID" class="custom-table" border="0" cellpadding="0"
+                    cellspacing="0">
+                </table>
+            </div>
+             <div data-role="collapsible" id="AttachmentCollapsible" class="collapsible">
+                <h4 id="AttachmentLabel">
+                    </h4>
+                <table width="100%" id="attachmentTable" class="custom-table" border="0" cellpadding="0"
+                    cellspacing="0">
+                </table>
+            </div>
+            <div data-role="collapsible" id="CASCollapsible" class="collapsible">
+                <h4 id="CASLabel">
+                    </h4>
+               <div data-role="content" class="editor-wrapper">
+                    <div class="editor-container">
+                        <table id="dynamicCASWOViewItemslist" style="width: 100%;">
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div data-role="collapsible" id="WOLogHistory" class="collapsible">
+                <h4 id="WorkOrderLogHistoryLabel">
+                    </h4>
+                <ul id="woLog" data-role="listview">
+                </ul>
+            </div>
+        </div>
+        <!-- /content -->
+    </div>
+    <!-- /page -->
+</body>
+</html>

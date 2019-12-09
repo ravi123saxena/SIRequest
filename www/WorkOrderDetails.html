@@ -1,0 +1,190 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <title>mainStream - Work Order Pre Approval</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css">
+    <link rel="shortcut icon" href="favicon.ico">
+      <script src="js/jquery-1.11.2.min.js" type="text/javascript"></script>
+        <script src="js/jquery.mobile-1.4.5.min.js"></script>
+</head>
+
+<body>
+    <div data-role="page" class="ce-inventory content-section">
+      
+
+        <div data-role="header" class="ms-inner-header" data-position="fixed">
+            <a href="#menu" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-menuBar"
+                data-corners="false">Menu</a>
+            <a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-icon-back-new ui-btn-left ui-btn-inline" data-corners="false" onclick="window.location = 'WorkOrderCreate.html';">Back</a>
+            <h1>C713142</h1>
+            <a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-btn-icon-notext ui-icon-help" data-corners="false" onclick="window.location = 'help.html';">Help</a>
+            <a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-btn-icon-notext ui-icon-logout" data-corners="false" onclick="window.location = 'login.html';">Logout</a>
+        </div>
+        <!-- /header -->
+        <!-- panel Section -->
+        <div data-role="panel" id="menu" data-theme="b" data-display="push">
+            <div class="ui-panel-inner">
+                <!-- This UL is the menu, where the items will be added -->
+                <!-- Make sure you don't add any <li> or any other content inside it! -->
+                <ul data-role="listview" class="mainMenu"></ul>
+            </div>
+        </div>
+        <!-- /panel -->
+        <div data-role="navbar" class="ms-menubar">
+            <ul>
+                <li><a class="ui-btn-active active-icon" href="#" onclick="window.location='WorkOrderDetails.html'" data-shadow="false">Details</a></li>
+                <li><a href="#" onclick="window.location='InspectionPictures.html'" data-shadow="false">Attachments</a></li>
+                <li><a href="#" onclick="window.location='Logs.html'" data-shadow="false">Logs</a></li>
+            </ul>
+        </div>
+        <!-- /navbar -->
+        <div data-role="collapsible-set" data-theme="c" data-content-theme="d" data-corners="false" class="ms-accord-details ms-grid-content">
+            <div data-role="collapsible">
+                <h4>Details</h4>
+                <table width="100%" class="custom-table" border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td class="left-block">Order Type</td>
+                        <td class="right-block">SelfGen</td>
+                    </tr>
+                    <tr>
+                        <td class="left-block">ACM</td>
+                        <td class="right-block">YES</td>
+                    </tr>
+                    <tr>
+                        <td class="left-block">Assignment Name</td>
+                        <td class="right-block">Sandhya J</td>
+                    </tr>
+                    <tr>
+                        <td class="left-block">Requestor</td>
+                        <td class="right-block">Sandhya J</td>
+                    </tr>
+                    <tr>
+                        <td class="left-block">Entered Date</td>
+                        <td class="right-block">9/19/2013 12:05:22 PM CST</td>
+                    </tr>
+                    <tr>
+                        <td class="left-block">ETA</td>
+                        <td class="right-block">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td class="left-block">Status</td>
+                        <td class="right-block">(OWR) Open, web request</td>
+                    </tr>
+                    <tr>
+                        <td class="left-block">Priority</td>
+                        <td class="right-block">(P1) Life Safety / Security / Emergency</td>
+                    </tr>
+                    <tr>
+                        <td class="left-block">Problem Code</td>
+                        <td class="right-block">Incident - Threat (Suspicious Person/Package)</td>
+                    </tr>
+                    <tr>
+                        <td class="left-block">Problem Description</td>
+                        <td class="right-block">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td class="left-block">Tech Notes</td>
+                        <td class="right-block">Incident - Threat (Suspicious Person/Package) : ></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div data-role="collapsible">
+                <h4>Contacts</h4>
+                <table width="100%" class="custom-table" border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td class="left-block">Location</td>
+                        <td class="right-block">
+                            @ MO, St Charles / RFC025177-Fifth St / All / All
+                            <span class="address-break">423 First Capitol Dr., St Charles, MO, 63301</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="left-block">RFC#</td>
+                        <td class="right-block">RFC025177</td>
+                    </tr>
+                    <tr>
+                        <td class="left-block">Location Phone</td>
+                        <td class="right-block">636-946-6616</td>
+                    </tr>
+                    <tr>
+                        <td class="left-block">Assignment</td>
+                        <td class="right-block">Sandhya J</td>
+                    </tr>
+                    <tr>
+                        <td class="left-block">Assignment Phone</td>
+                        <td class="right-block">9089008888</td>
+                    </tr>
+                    <tr>
+                        <td class="left-block">Contact</td>
+                        <td class="right-block">Sandhya J</td>
+                    </tr>
+                    <tr>
+                        <td class="left-block">Contact Phone</td>
+                        <td class="right-block">636-946-6616</td>
+                    </tr>
+                    <tr>
+                        <td class="left-block">Caller</td>
+                        <td class="right-block">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td class="left-block">Caller Phone</td>
+                        <td class="right-block">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td class="left-block">RFM</td>
+                        <td class="right-block">Toni Stovall</td>
+                    </tr>
+                    <tr>
+                        <td class="left-block">FM</td>
+                        <td class="right-block">Larry Hartle</td>
+                    </tr>
+                </table>
+            </div>
+
+
+            <div data-role="collapsible">
+                <h4>CAS Values</h4>
+                <div data-role="content" class="editor-wrapper">
+                    <div class="editor-container">
+                        <form>
+                            <label for="casNTE">NTE:</label>
+                            <input type="text" name="casNTE" id="casNTE" value="" />
+
+
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+        <div class="btn-panel">
+            <a href="#" data-role="button" data-inline="true">Approve</a>
+            <a href="#" data-role="button" data-inline="true" data-theme="b">Dispute</a>
+        </div>
+
+
+        <!--<div data-role="footer" class="nav-glyphish-example" data-position="fixed">
+            
+            <div data-role="navbar" class="nav-glyphish-example" data-grid="d">
+                <ul id="custom-icon">
+                    <li><a href="#" id="dashboard" data-icon="custom" data-iconshadow="false" onclick="window.location='Details.html'">Dashboard</a></li>
+                    <li><a href="#" onclick="window.location='WorkOrderCreate.html'" class="ui-btn-active" id="services" data-icon="custom" data-iconshadow="false">Service</a></li>
+                    <li><a href="#" id="feedback" onclick="window.location='WorkOrderSearch.html'" data-icon="custom" data-iconshadow="false">Feedback</a></li>
+                    <li><a href="#" id="history" data-icon="custom" data-iconshadow="false" onclick="window.location='WorkOrderSearchHistory.html'">History</a></li>
+                    <li><a href="#" id="profile" data-icon="custom" data-iconshadow="false" onclick="window.location = 'Profile.html';">Profile</a></li>
+                </ul>
+            </div>
+        </div>-->
+		<div data-role="footer" data-position="fixed">
+			<h4><a href="#" onclick="window.location = 'gridView.html';"><img src="images/ui-icon-menu.png" alt="Menu"/></a></h4>
+		</div><!-- /footer -->
+    </div>
+    <!-- /page -->
+</body>
+</html>

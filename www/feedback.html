@@ -1,0 +1,111 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <title>mainStream - Feedback</title>
+</head>
+<body>
+    <!-- Feedback page -->
+    <div data-role="page" class="ms-inventory content-section" id="feedbackPage">
+        <!-- jQueryMobile Events -->
+        <script type="text/javascript">
+            // Page before create event for feedback page
+            $(document).one('pagebeforecreate', "#feedbackPage", function () {
+                if (navigator.onLine) {
+                    getTranslations("ProvideFeedback");
+                    var interval = setTimeout(function () {
+                        $("div").addClass('ui-disabled');
+                        $.mobile.loading('show', {
+                            text: 'Loading',
+                            textVisible: true,
+                            theme: 'b',
+                            textonly: false,
+                            html: ""
+                        });
+                        clearInterval(interval);
+                    }, 1);
+                } else {
+                    setTimeout(function () {
+                        hideImage();
+                        showErrorPopUp(true, noNetworkTranslation);
+                    }, 1000);
+                }
+
+            });
+            // Page show event for feedback page
+            $(document).one('pageshow', "#feedbackPage", function () {
+                //Hide Logout button for SSO user
+                if (getLocal("SSOUser") === "true") {
+                    $("#logoutButton").hide();
+                }
+
+                if (navigator.onLine) {
+                    feedbackForm();
+                    setLocal("NavigateToFeedback", "Sub");
+                }
+                else {
+                    setTimeout(function () {
+                        showErrorPopUp(true, noNetworkTranslation);
+                    }, 1000);
+                }
+                //Translation section
+                //setTimeout(function () {
+                $("#feedbackTitle").text(getTranslatedValue("PageTitle"));
+                $("#woLabel").html("<span style='color:red;'>*</span> " + getTranslatedValue("WorkOrderNumberLabel") + ":");
+                $("#feedbackSearch").text(getTranslatedValue("ProvideFeedbackButton"));
+                var pageID = $.mobile.activePage.attr('id');
+                appName == 'iCRS' ? $("#" + pageID + " #appHeader").text(appHeaderForiOS) : $("#" + pageID + " #appHeader").text(appHeaderForAndroid);
+                $("#woNumberFeedback").prop("placeholder", getTranslatedValue("WorkOrderNumberLabel"))
+                hideImage();
+                //}, 3000);
+            });
+        </script>
+        <!-- header section -->
+        <div data-role="header" class="ms-inner-header" data-position="fixed">
+
+            <a href="#menu" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-menuBar"
+                data-corners="false"></a>
+            <a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-barcode"
+                   data-corners="false" data-shadow="false" id="scanButton" onclick="scanBarcode();"></a>
+                   <!--<a href="#menu" onClick="navigateToHome();" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-left ui-icon-homeBar"
+                data-corners="false"></a>-->
+            <h1 id="appHeader">
+            </h1>
+            <!--<a href="#" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-icon-help"
+                data-corners="false" onclick="navigateToHelp();">Help</a>-->
+                 <a href="#" id="logoutButton" class="ui-btn ui-shadow ui-nodisc-icon ui-btn-icon-notext ui-btn-right ui-icon-logout"
+                    data-corners="false" onclick="logOut();">Logout</a>
+        </div>
+        <!-- /header -->
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#" class="ui-btn-active screenHeader" id="feedbackTitle"></a></li>
+            </ul>
+        </div>
+        <!-- Panel section -->
+        <div data-role="panel" id="menu" data-theme="b" data-display="push">
+            <div class="ui-panel-inner">
+                <!-- This UL is the menu, where the items will be added -->
+                <!-- Make sure you don't add any <li> or any other content inside it! -->
+                <ul data-role="listview" class="mainMenu"></ul>
+            </div>
+        </div>
+        <!-- /Panel -->
+        <div data-role="content" class="editor-wrapper">
+            <div class="editor-container">
+                <div class="ui-field-contain">
+                    <label for="text-basic" id="woLabel">
+                    </label>
+                    <input type="text" name="woNumberFeedback" id="woNumberFeedback" placeholder=""
+                        data-corners="false" value="" />
+                </div>
+                <div class="btn-panel">
+                    <a href="#" id="feedbackSearch" class="ui-btn ui-btn-inline"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /page -->
+</body>
+</html>
